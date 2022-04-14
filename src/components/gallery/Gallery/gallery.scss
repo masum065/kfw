@@ -1,0 +1,432 @@
+.warriorOverviewBoxesWrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 20px 0 0 0;
+  .row {
+    width: 100%;
+  }
+  .warriorOverviewSmallBox {
+    display: flex;
+    flex-wrap: wrap;
+    width: 265px;
+    height: 265px;
+    align-items: center;
+    justify-content: center;
+    padding: 33px;
+    position: relative;
+    text-decoration: none;
+    &.warriorOverviewBox1Img {
+      background: url(../../../assets/img/rarities-box1.png) no-repeat;
+    }
+    &.warriorOverviewBox2Img {
+      background: url(../../../assets/img/rarities-box2.png) no-repeat;
+    }
+    &:hover {
+      &:before {
+        content: '';
+        background: url(../../../assets/img/border.png) no-repeat;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+    }
+    h3 {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 36px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #000000;
+      flex-direction: column;
+      margin: 0;
+      span {
+        font-size: 20px;
+        line-height: 26px;
+        display: block;
+      }
+    }
+  }
+}
+.attributeContainer {
+  .nav-pills {
+    .nav-link {
+      background: rgba(153, 237, 161, 0.47);
+      border-radius: 20px;
+      text-align: center;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 24px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #000000;
+      font-family: var(--Blinker);
+      margin-bottom: 6px;
+      padding: 8px 0px;
+      width: 100%;
+      width: 220px;
+      justify-content: center;
+      position: relative;
+      &:hover {
+        &:before {
+          background: url(../../../assets/img/atr-outline.png);
+          width: 100%;
+          height: 100%;
+          content: '';
+          position: absolute;
+        }
+      }
+      &.active {
+        background: #0c5f08;
+        color: #fff;
+        &:before {
+          background: url(../../../assets/img/atr-outline.png);
+          width: 100%;
+          height: 100%;
+          content: '';
+          position: absolute;
+        }
+      }
+    }
+  }
+  .tab-content {
+    padding: 0 0 0 35px;
+    .tab-pane {
+      .atrImgWrap {
+        width: 100%;
+      }
+    }
+  }
+}
+.houseRankingsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  .houseRankingFilter {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    .houseRankingTextField {
+      background: rgba(231, 255, 233, 0.67);
+      border: 1px solid #0c5f08;
+      box-sizing: border-box;
+      border-radius: 20px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 17px;
+      line-height: 22px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      padding: 6px 0;
+      margin: 0 16px 0 0;
+      color: rgba(12, 95, 8, 0.5);
+      min-width: 460px;
+      &::-webkit-input-placeholder {
+        /* Chrome/Opera/Safari */
+        color: rgba(12, 95, 8, 0.5);
+      }
+      &::-moz-placeholder {
+        /* Firefox 19+ */
+        color: rgba(12, 95, 8, 0.5);
+      }
+      &:-ms-input-placeholder {
+        /* IE 10+ */
+        color: rgba(12, 95, 8, 0.5);
+      }
+      &:-moz-placeholder {
+        /* Firefox 18- */
+        color: rgba(12, 95, 8, 0.5);
+      }
+    }
+    .generalGreenBtn {
+      margin-right: 15px;
+    }
+  }
+  .houseRankingsBoxesWrap {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 35px auto;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    .row {
+      width: 100%;
+      .insideHouseRankingBox {
+        margin-bottom: 15px;
+        img {
+          width: 100%;
+        }
+        p {
+          margin: 0;
+          font-style: normal;
+          font-weight: 400;
+          font-size: 18px;
+          line-height: 23px;
+          color: #000000;
+        }
+        span {
+          font-style: normal;
+          font-weight: 400;
+          font-size: 18px;
+          line-height: 23px;
+          color: #000000;
+        }
+      }
+    }
+  }
+}
+.filterModal {
+  .modal-dialog {
+    max-width: 600px;
+    .modal-content {
+      border: 0;
+      border-radius: 10px;
+      .btn-close {
+        border: 0;
+        background: none;
+        margin-left: auto;
+        margin-top: 20px;
+        margin-right: 25px;
+        padding: 0;
+        &:hover {
+          outline: 0;
+          box-shadow: 0 0 0;
+        }
+        &:focus {
+          outline: 0;
+          box-shadow: 0 0 0;
+        }
+        &:active {
+          outline: 0;
+          box-shadow: 0 0 0;
+        }
+        img {
+          width: 20px;
+        }
+      }
+      .modal-body {
+        padding: 0;
+        .filterSelectBoxMainWrap {
+          display: flex;
+          flex-wrap: wrap;
+          max-width: 85%;
+          margin: auto;
+          padding: 20px 0;
+          form {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+          }
+          .filterSelectionBox {
+            display: flex;
+            width: 100%;
+            margin-bottom: 6px;
+            .leftToggleSelect {
+              width: 43%;
+              margin-right: 10px;
+              .leftToggleAnchor {
+                width: 100%;
+                display: block;
+                background: #c1e9c4;
+                border-radius: 20px;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 20px;
+                line-height: 26px;
+                display: flex;
+                align-items: center;
+                text-align: center;
+                color: #000000;
+                height: 36px;
+                text-align: center;
+                text-decoration: none;
+                justify-content: center;
+              }
+            }
+            .rightToggleSelect {
+              width: 55%;
+              .accordion {
+                width: 100%;
+                .accordion-item {
+                  border: 0;
+                  background: none;
+                  box-shadow: 0 0 0;
+                }
+                .accordion-header {
+                  width: 100%;
+                  border: 0;
+                  background: none;
+                  box-shadow: 0 0 0;
+                  .accordion-button {
+                    background: #e6f6e7;
+                    border: 1px solid #0c5f08;
+                    box-sizing: border-box;
+                    border-radius: 20px;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 17px;
+                    line-height: 22px;
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                    color: rgba(12, 95, 8, 0.5);
+                    height: 36px;
+                    width: 100%;
+                    &:hover {
+                      outline: 0;
+                      box-shadow: 0 0 0;
+                    }
+                    &:focus {
+                      outline: 0;
+                      box-shadow: 0 0 0;
+                    }
+                    &:active {
+                      outline: 0;
+                      box-shadow: 0 0 0;
+                    }
+                    span {
+                      display: flex;
+                      width: 100%;
+                      flex-wrap: wrap;
+                      align-items: center;
+                      justify-content: center;
+                    }
+                  }
+                }
+                .accordion-body {
+                  padding: 0;
+                }
+                .accordionAttrWrap {
+                  padding: 0;
+                  margin: 0;
+                  .accordionAttrList {
+                    background: #e6f6e7;
+                    border-radius: 20px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    align-items: center;
+                    justify-content: center;
+                    height: 36px;
+                    position: relative;
+                    p {
+                      display: flex;
+                      font-style: normal;
+                      font-weight: 400;
+                      font-size: 17px;
+                      line-height: 22px;
+                      display: flex;
+                      align-items: center;
+                      text-align: center;
+                      color: #0c5f08;
+                      margin: 0;
+                    }
+                    .customCheckBoxWrap {
+                      display: block;
+                      position: absolute;
+                      padding-left: 0px;
+                      margin-bottom: 19px;
+                      cursor: pointer;
+                      -webkit-user-select: none;
+                      -moz-user-select: none;
+                      -ms-user-select: none;
+                      user-select: none;
+                      margin-left: auto;
+                      width: 20px;
+                      right: 20px;
+                    }
+
+                    /* Hide the browser's default checkbox */
+                    .customCheckBoxWrap input {
+                      position: absolute;
+                      opacity: 0;
+                      cursor: pointer;
+                      height: 0;
+                      width: 0;
+                    }
+
+                    /* Create a custom checkbox */
+                    .customCheckBoxWrap .checkmark {
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      height: 18px;
+                      width: 18px;
+                      border: 3px solid #0c5f08;
+                    }
+
+                    /* On mouse-over, add a grey background color */
+                    .customCheckBoxWrap:hover input ~ .checkmark {
+                      background-color: transparent;
+                    }
+
+                    /* When the checkbox is checked, add a blue background */
+                    .customCheckBoxWrap input:checked ~ .checkmark {
+                      background-color: #fff;
+                    }
+
+                    /* Create the checkmark/indicator (hidden when not checked) */
+                    .customCheckBoxWrap .checkmark:after {
+                      content: '';
+                      position: absolute;
+                      display: none;
+                    }
+
+                    /* Show the checkmark when checked */
+                    .customCheckBoxWrap input:checked ~ .checkmark:after {
+                      display: block;
+                    }
+
+                    /* Style the checkmark/indicator */
+                    .customCheckBoxWrap .checkmark:after {
+                      left: 2px;
+                      top: 2px;
+                      width: 8px;
+                      height: 8px;
+                      border: solid white;
+                      border-width: 0;
+                      -ms-transform: rotate(45deg);
+                      background: #0c5f08;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.rightToggleSelect .accordion-button[aria-expanded='false'] {
+  &:after {
+    content: '';
+    position: absolute;
+    right: 20px;
+    bottom: 7px;
+    width: 18px;
+    height: 18px;
+    background: url(../../../assets/img/arrow.png) no-repeat;
+    background-size: cover;
+  }
+}
+.rightToggleSelect .accordion-button[aria-expanded='true'] {
+  &:after {
+    content: '';
+    position: absolute;
+    right: 20px;
+    bottom: 7px;
+    width: 18px;
+    height: 18px;
+    background: url(../../../assets/img/arrow.png) no-repeat;
+    background-size: cover;
+    transform: rotate(180deg);
+  }
+}
