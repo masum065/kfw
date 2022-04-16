@@ -1,4 +1,5 @@
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+// import { Box } from '@mui/system';
 import * as anchor from '@project-serum/anchor';
 import {
   AccountInfo as TokenAccount,
@@ -16,6 +17,9 @@ import {
   Transaction,
   TransactionInstruction,
 } from '@solana/web3.js';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en';
+import relativeTime from 'dayjs/plugin/relativeTime'; // import plugin
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,7 +32,10 @@ import {
 import { buildLeaves, factionToNumber } from '../../utils';
 import { MerkleTree } from '../../utils/merkleTree';
 import { StackContext } from './Context';
-import { Animal, Jungle } from './types';
+import { Animal, Jungle, StakerInfo } from './types';
+
+dayjs.extend(relativeTime); // use plugin
+dayjs.locale('en'); // use locale
 
 // Program Id
 const programID = new PublicKey(idl.metadata.address);
@@ -44,19 +51,37 @@ export const StakingProvider = (props: Props) => {
   const [userAccount, setUserAccount] = useState<TokenAccount>();
   const [animals, setAnimals] = useState<Animal[]>();
   const [jungle, setJungle] = useState<Jungle>();
+  const [stakerInfo, setStakerInfo] = useState<StakerInfo>();
   const [stakedAnimals, setStakedAnimals] = useState<Animal[]>();
-  const [status, setStatus] = useState<any>({
-    animals: {
-      loading: false,
-      loadingEnd: true,
-      finish: true,
-    },
-    stakedAnimals: {
-      loading: false,
-      loadingEnd: true,
-      finish: true,
-    },
+  const [animalsStatus, setAnimalsStatus] = useState<any>({
+    loading: false,
+    loadingEnd: true,
+    finish: true,
   });
+  const [stakedAnimalsStatus, setStakedAnimalsStatus] = useState<any>({
+    loading: false,
+    loadingEnd: true,
+    finish: true,
+  });
+  const [avaliableStakedAnimals, setStateAvaliableStakedAnimals] = useState<
+    Animal[]
+  >([]);
+
+  const anchorWallet = useMemo(() => {
+    if (
+      !wallet ||
+      !wallet.publicKey ||
+      !wallet.signAllTransactions ||
+      !wallet.signTransaction
+    ) {
+      return;
+    }
+    return {
+      publicKey: wallet.publicKey,
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
+    };
+  }, [wallet]);
 
   // confirmed provider
   const provider = useMemo(() => {
@@ -82,13 +107,10 @@ export const StakingProvider = (props: Props) => {
   const fetchAnimals = useCallback(async () => {
     if (!props.connection || !wallet.publicKey) return;
     try {
-      setStatus({
-        ...status,
-        animals: {
-          loading: true,
-          loadingEnd: false,
-          finish: false,
-        },
+      setAnimalsStatus({
+        loading: true,
+        loadingEnd: false,
+        finish: false,
       });
       const owned = await Metadata.findDataByOwner(
         props.connection,
@@ -119,35 +141,26 @@ export const StakingProvider = (props: Props) => {
       setAnimals(data);
     } catch (err) {
       console.log('Failed fetching owned tokens', err);
-    }
-
-    setStatus({
-      ...status,
-      animals: {
-        ...status.animals,
+    } finally {
+      setAnimalsStatus({
         loading: false,
+        loadingEnd: true,
         finish: true,
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      });
+    }
   }, [wallet, props.connection]);
 
   useEffect(() => {
-    if (!animals) fetchAnimals();
-  }, [fetchAnimals, animals]);
+    fetchAnimals();
+  }, [anchorWallet, fetchAnimals]);
 
   // Fetches the animals staked by the user
-
   const fetchStakedAnimals = useCallback(async () => {
     if (!props.connection || !wallet.publicKey) return;
-
-    setStatus({
-      ...status,
-      stakedAnimals: {
-        loading: true,
-        loadingEnd: false,
-        finish: false,
-      },
+    setStakedAnimalsStatus({
+      loading: true,
+      loadingEnd: false,
+      finish: false,
     });
     const program = new anchor.Program(idl as anchor.Idl, programID, provider);
 
@@ -155,8 +168,8 @@ export const StakingProvider = (props: Props) => {
       const staked = await program.account.animal.all([
         {
           memcmp: {
-            offset: 42, // Bumps + mint
-            bytes: wallet.publicKey?.toString(),
+            offset: 43, // Bumps + mint
+            bytes: wallet.publicKey.toString(),
           },
         },
       ]);
@@ -184,21 +197,18 @@ export const StakingProvider = (props: Props) => {
       setStakedAnimals(data);
     } catch (err) {
       console.log('Failed fetching owned tokens', err);
-    }
-    setStatus({
-      ...status,
-      stakedAnimals: {
-        ...status.stakedAnimals,
+    } finally {
+      setStakedAnimalsStatus({
         loading: false,
+        loadingEnd: true,
         finish: true,
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      });
+    }
   }, [provider, wallet, props.connection]);
 
   useEffect(() => {
-    if (!stakedAnimals) fetchStakedAnimals();
-  }, [stakedAnimals, fetchStakedAnimals]);
+    fetchStakedAnimals();
+  }, [anchorWallet, fetchStakedAnimals]);
 
   // Fetch jungle
   const fetchJungle = useCallback(async () => {
@@ -224,6 +234,8 @@ export const StakingProvider = (props: Props) => {
       animalsStaked: fetchedJungle.animalsStaked,
       maximumRarity: fetchedJungle.maximumRarity,
       maximumRarityMultiplier: fetchedJungle.maximumRarityMultiplier,
+      weeklyMultiplier: fetchedJungle.weeklyMultiplier,
+      holdingsMultiplier: fetchedJungle.holdingsMultiplier,
       baseWeeklyEmissions: fetchedJungle.baseWeeklyEmissions,
       root: fetchedJungle.root,
     });
@@ -231,7 +243,7 @@ export const StakingProvider = (props: Props) => {
 
   useEffect(() => {
     fetchJungle();
-  }, [fetchJungle]);
+  }, [anchorWallet, fetchJungle]);
 
   // Fetches the staking rewards account
 
@@ -261,6 +273,51 @@ export const StakingProvider = (props: Props) => {
   useEffect(() => {
     fetchUserAccount();
   }, [fetchUserAccount]);
+
+  // fetch staker info
+  const fetchStakerInfo = useCallback(async () => {
+    if (
+      !jungle ||
+      !props.connection ||
+      !wallet ||
+      !wallet.publicKey ||
+      !provider
+    )
+      return;
+    try {
+      const program = new anchor.Program<JungleProgram>(
+        JundleIdl,
+        programID,
+        provider
+      );
+
+      const [jungleAddress] = await PublicKey.findProgramAddress(
+        [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
+        program.programId
+      );
+
+      const [stakerInfo] = await PublicKey.findProgramAddress(
+        [
+          Buffer.from('staker', 'utf8'),
+          jungleAddress.toBuffer(),
+          wallet.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+
+      const stakerInfoAccount = await program.account.stakerInfo.fetch(
+        stakerInfo
+      );
+      const holdings = stakerInfoAccount.holdings.toNumber();
+
+      setStakerInfo({ holdings });
+    } catch (e) {
+      console.log('Staker Info Account not Created Yet!');
+    }
+  }, [props.connection, jungle, wallet, provider]);
+  useEffect(() => {
+    fetchStakerInfo();
+  }, [fetchStakerInfo]);
 
   const createAccount = useCallback(async () => {
     if (
@@ -298,31 +355,69 @@ export const StakingProvider = (props: Props) => {
     [jungle]
   );
 
+  const getStakingMultiplier = useCallback(
+    (animal: Animal, end: Date) => {
+      if (!jungle || !animal.stakedAt)
+        return { total: 1, holdingsMultiplier: 0, weeklyMultiplier: 0 };
+
+      const weekDifference = Math.round(
+        (end.getTime() - animal.stakedAt.getTime()) / 1000 / 60 / 60 / 24 / 7
+      );
+      const weeklyMultiplier =
+        weekDifference < 13 ? 0 : weekDifference < 25 ? 1 : 2.833333333333333;
+
+      const holdings = stakerInfo?.holdings || stakedAnimals?.length || 1;
+      let holdingsMultiplier =
+        holdings * jungle.holdingsMultiplier.toNumber() -
+        jungle.holdingsMultiplier.toNumber();
+
+      let totalMultiplier = 1 + weeklyMultiplier + holdingsMultiplier;
+      if (totalMultiplier > jungle.maximumRarityMultiplier.toNumber()) {
+        totalMultiplier = jungle.maximumRarityMultiplier.toNumber();
+      }
+
+      return { total: totalMultiplier, holdingsMultiplier, weeklyMultiplier };
+    },
+    [jungle, stakerInfo, stakedAnimals]
+  );
   const getPendingStakingRewards = useCallback(
     (animal: Animal, end: Date) => {
-      if (!jungle || !animal.lastClaim || end < animal.lastClaim) return 0;
+      if (!jungle || (animal.lastClaim && end < animal.lastClaim)) {
+        return {
+          rewards: 0,
+          multipliers: { total: 1, holdingsMultiplier: 0, weeklyMultiplier: 0 },
+        };
+      }
+      const lastClaim = animal.lastClaim || animal.stakedAt || new Date();
+      let multipliers = getStakingMultiplier(animal, end);
 
-      const elapsed = (end.valueOf() - animal.lastClaim.valueOf()) / 1000;
-      const pendingRewards =
-        (parseFloat((animal.emissionsPerDay || animal.emissionsPerDay) as any) /
-          86400) *
-        elapsed;
+      const elapsed = (end.getTime() - lastClaim.getTime()) / 1000;
+      let pendingRewards =
+        (parseFloat(animal.emissionsPerDay as any) / 86400) * elapsed;
 
-      return pendingRewards / 10 ** 9;
+      pendingRewards *= multipliers.total;
+
+      return {
+        rewards: pendingRewards / 10 ** 3,
+        multipliers,
+      };
     },
-    [jungle, getRarityMultiplier]
+    [jungle, stakerInfo, getStakingMultiplier]
   );
 
   // stake animal
   const stakeAnimal = useCallback(
     async (animal: Animal) => {
       if (!wallet || !wallet.publicKey || !jungle || !provider) return;
-      const joinToast = toast.loading(`${animal.metadata.name} is Staking..`);
+      const joinToast = toast.loading(
+        `${animal.metadata.name} Joining For Meditation..`
+      );
       const program = new anchor.Program<JungleProgram>(
         JundleIdl,
         programID,
         provider
       );
+
       const [jungleAddress] = await PublicKey.findProgramAddress(
         [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
         program.programId
@@ -335,10 +430,19 @@ export const StakingProvider = (props: Props) => {
         [Buffer.from('deposit', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
+      const [stakerInfo, stakerInfoBumps] = await PublicKey.findProgramAddress(
+        [
+          Buffer.from('staker', 'utf8'),
+          jungleAddress.toBuffer(),
+          wallet.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
 
       const bumps = {
         animal: animalBump,
         deposit: depositBump,
+        staker_info: stakerInfoBumps,
       };
 
       const stakerAccount = await Token.getAssociatedTokenAddress(
@@ -351,7 +455,7 @@ export const StakingProvider = (props: Props) => {
       const instructions: TransactionInstruction[] = [];
 
       try {
-        new Token(
+        await new Token(
           provider.connection,
           animal.mint,
           TOKEN_PROGRAM_ID,
@@ -373,8 +477,32 @@ export const StakingProvider = (props: Props) => {
       const indexStaked = constants.metadata.findIndex(
         (e) => e.mint === animal.mint.toString()
       );
-
       try {
+        await program.account.stakerInfo.fetch(stakerInfo);
+      } catch (err) {
+        instructions.push(
+          program.instruction.initStaker(stakerInfoBumps, {
+            accounts: {
+              jungle: jungleAddress,
+              stakerInfo: stakerInfo,
+              staker: wallet.publicKey,
+              systemProgram: SystemProgram.programId,
+            },
+          })
+        );
+      }
+      try {
+        console.log({
+          jungle: jungleAddress.toString(),
+          escrow: jungle.escrow.toString(),
+          animal: animalAddress.toString(),
+          stakerInfo: stakerInfo.toString(),
+          staker: wallet.publicKey.toString(),
+          mint: animal.mint.toString(),
+          stakerAccount: stakerAccount.toString(),
+          depositAccount: deposit.toString(),
+          tokenProgram: TOKEN_PROGRAM_ID.toString(),
+        });
         await program.rpc.stakeAnimal(
           bumps,
           tree.getProofArray(indexStaked),
@@ -385,6 +513,7 @@ export const StakingProvider = (props: Props) => {
               jungle: jungleAddress,
               escrow: jungle.escrow,
               animal: animalAddress,
+              stakerInfo: stakerInfo,
               staker: wallet.publicKey,
               mint: animal.mint,
               stakerAccount: stakerAccount,
@@ -398,27 +527,39 @@ export const StakingProvider = (props: Props) => {
           }
         );
 
+        fetchStakerInfo();
+
         toast.update(joinToast, {
-          render: `${animal.metadata.name} is successfully Staked!`,
+          render: `${animal.metadata.name} has successfully Joined in Meditation!`,
           type: 'success',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
+          autoClose: 4000,
         });
         fetchAnimals();
         fetchStakedAnimals();
       } catch (err) {
         toast.update(joinToast, {
-          render: `Staking Failed!`,
+          render: `${animal.metadata.name} is failed to Join in the Meditation!`,
           type: 'error',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
+          autoClose: 4000,
         });
         console.log('Staking Failed!', err);
       }
     },
-    [jungle, provider, tree, wallet, fetchAnimals, fetchStakedAnimals]
+    [
+      jungle,
+      provider,
+      tree,
+      wallet,
+      fetchAnimals,
+      fetchStakedAnimals,
+      fetchStakerInfo,
+    ]
   );
 
   // Unstakes an animal.
@@ -429,7 +570,7 @@ export const StakingProvider = (props: Props) => {
       if (!wallet || !wallet.publicKey || !jungle || !provider) return;
 
       const unStakeToast = toast.loading(
-        `${animal.metadata.name} is Unstaking..`
+        `${animal.metadata.name} is Leaving the Meditation`
       );
       const program = new anchor.Program<JungleProgram>(
         JundleIdl,
@@ -452,8 +593,18 @@ export const StakingProvider = (props: Props) => {
         [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
+
       const [deposit] = await PublicKey.findProgramAddress(
         [Buffer.from('deposit', 'utf8'), animal.mint.toBuffer()],
+        program.programId
+      );
+
+      const [stakerInfo] = await PublicKey.findProgramAddress(
+        [
+          Buffer.from('staker', 'utf8'),
+          jungleAddress.toBuffer(),
+          wallet.publicKey.toBuffer(),
+        ],
         program.programId
       );
 
@@ -485,7 +636,7 @@ export const StakingProvider = (props: Props) => {
         );
 
       try {
-        new Token(
+        await new Token(
           provider.connection,
           animal.mint,
           TOKEN_PROGRAM_ID,
@@ -510,6 +661,7 @@ export const StakingProvider = (props: Props) => {
             jungle: jungleAddress,
             escrow: jungle.escrow,
             animal: animalAddress,
+            stakerInfo: stakerInfo,
             staker: wallet.publicKey,
             mint: jungle.mint,
             stakerAccount: rewardsStakerAccount,
@@ -528,37 +680,41 @@ export const StakingProvider = (props: Props) => {
             jungle: jungleAddress,
             escrow: jungle.escrow,
             animal: animalAddress,
+            stakerInfo: stakerInfo,
             staker: wallet.publicKey,
             mint: animal.mint,
             stakerAccount: animalStakerAccount,
             depositAccount: deposit,
             tokenProgram: TOKEN_PROGRAM_ID,
-            clock: SYSVAR_CLOCK_PUBKEY,
+            // clock: SYSVAR_CLOCK_PUBKEY,
           },
           instructions: instructions,
         });
 
+        fetchStakerInfo();
+
         toast.update(unStakeToast, {
-          render: `${animal.metadata.name} has successfully Unstaked`,
+          render: `${animal.metadata.name} has successfully left the Meditating`,
           type: 'success',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
+          autoClose: 4000,
         });
 
         fetchAnimals();
-        fetchStakedAnimals();
+        await fetchStakedAnimals();
         fetchUserAccount();
       } catch (err) {
         toast.update(unStakeToast, {
-          render: `Failed to Unstake!`,
+          render: `Failed to leave the Meditating!`,
           type: 'error',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
+          autoClose: 4000,
         });
         console.error(err);
-        console.log(err);
       }
     },
     [
@@ -569,6 +725,7 @@ export const StakingProvider = (props: Props) => {
       fetchAnimals,
       fetchStakedAnimals,
       fetchUserAccount,
+      fetchStakerInfo,
     ]
   );
 
@@ -582,7 +739,6 @@ export const StakingProvider = (props: Props) => {
         programID,
         provider
       );
-
       const [animalAddress] = await PublicKey.findProgramAddress(
         [Buffer.from('animal'), mint.toBuffer()],
         programID
@@ -593,6 +749,7 @@ export const StakingProvider = (props: Props) => {
       )[0];
       try {
         const fetchedAnimal = await program.account.animal.fetch(animalAddress);
+
         return {
           mint: mint,
           metadata: metadataItem.arweave,
@@ -600,6 +757,7 @@ export const StakingProvider = (props: Props) => {
           emissionsPerDay: fetchedAnimal.emissionsPerDay.toString(),
           faction: metadataItem.faction,
           lastClaim: new Date(fetchedAnimal.lastClaim.toNumber() * 1000),
+          stakedAt: new Date(fetchedAnimal.stakedAt.toNumber() * 1000),
         };
       } catch (err) {
         return {
@@ -613,6 +771,33 @@ export const StakingProvider = (props: Props) => {
     },
     [props.connection, provider]
   );
+
+  const getAvaliableStakedAnimals = useCallback(async () => {
+    let updatedAvaliableAnimals: Animal[] = [];
+    const result = stakedAnimals?.map(async (augmentedAnimal) => {
+      try {
+        const animal = await fetchAnimal(augmentedAnimal.mint);
+        if (animal) return animal;
+        else return augmentedAnimal;
+      } catch (e) {
+        console.log(e);
+        return augmentedAnimal;
+      }
+    });
+
+    updatedAvaliableAnimals = await Promise.all(result || []);
+    setStateAvaliableStakedAnimals(updatedAvaliableAnimals);
+  }, [fetchAnimal, stakedAnimals]);
+
+  const setAvaliableStakedAnimals = useCallback(
+    async (_avaliableStakedAnimals?: Animal[]) => {
+      if (_avaliableStakedAnimals)
+        setStateAvaliableStakedAnimals(_avaliableStakedAnimals);
+      else await getAvaliableStakedAnimals();
+    },
+    [getAvaliableStakedAnimals]
+  );
+
   const claimStakingRewards = useCallback(
     async (animal: Animal) => {
       if (!wallet || !wallet.publicKey || !wallet.publicKey || !jungle) return;
@@ -641,6 +826,15 @@ export const StakingProvider = (props: Props) => {
         program.programId
       );
 
+      const [stakerInfo] = await PublicKey.findProgramAddress(
+        [
+          Buffer.from('staker', 'utf8'),
+          jungleAddress.toBuffer(),
+          wallet.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+
       const stakerAccount = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
@@ -663,11 +857,12 @@ export const StakingProvider = (props: Props) => {
               ),
             ];
 
-        await program.rpc.claimStaking({
+        const txid = await program.rpc.claimStaking({
           accounts: {
             jungle: jungleAddress,
             escrow: jungle.escrow,
             animal: animalAddress,
+            stakerInfo: stakerInfo,
             staker: wallet.publicKey,
             mint: jungle.mint,
             stakerAccount: stakerAccount,
@@ -686,6 +881,7 @@ export const StakingProvider = (props: Props) => {
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
+          autoClose: 4000,
         });
 
         fetchAnimals();
@@ -698,7 +894,9 @@ export const StakingProvider = (props: Props) => {
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
+          autoClose: 4000,
         });
+        throw new Error();
       }
     },
     [
@@ -712,15 +910,14 @@ export const StakingProvider = (props: Props) => {
     ]
   );
 
-  // claim all Staking Rewards
   const claimAllStakingRewards = useCallback(async () => {
     //@ts-ignore
     const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
 
     if (!stakedAnimals || !claimList) return;
 
-    const claimItems = stakedAnimals.filter((animal) =>
-      claimList.includes(animal.metadata.name)
+    const claimItems = stakedAnimals.filter((animal, index) =>
+      claimList.includes(animal.metadata.name + '~' + index)
     );
 
     if (!wallet || !wallet.publicKey || !jungle || !provider) return;
@@ -765,6 +962,15 @@ export const StakingProvider = (props: Props) => {
           wallet.publicKey
         )
       );
+
+    const [stakerAddress] = await PublicKey.findProgramAddress(
+      [
+        Buffer.from('staker', 'utf8'),
+        jungleAddress.toBuffer(),
+        wallet.publicKey.toBuffer(),
+      ],
+      program.programId
+    );
     await Promise.all(
       claimItems.map(async (animal) => {
         const [animalAddress] = await PublicKey.findProgramAddress(
@@ -777,6 +983,7 @@ export const StakingProvider = (props: Props) => {
               jungle: jungleAddress,
               escrow: jungle.escrow,
               animal: animalAddress,
+              stakerInfo: stakerAddress,
               staker: feePayer,
               mint: jungle.mint,
               stakerAccount: stakerAccount,
@@ -803,10 +1010,10 @@ export const StakingProvider = (props: Props) => {
         closeOnClick: true,
         closeButton: true,
       });
+
       fetchAnimals();
       fetchStakedAnimals();
       fetchUserAccount();
-      refreshAnimals();
     } catch (err) {
       toast.update(claimToast, {
         render: 'Failed to Claim Earnings',
@@ -832,13 +1039,11 @@ export const StakingProvider = (props: Props) => {
     await fetchJungle();
     await fetchAnimals();
     await fetchStakedAnimals();
-  }, [
-    fetchJungle,
-    fetchStakedAnimals,
-    fetchAnimals,
-    setAnimals,
-    setStakedAnimals,
-  ]);
+  }, [fetchJungle, fetchStakedAnimals, fetchAnimals]);
+
+  useEffect(() => {
+    refreshAnimals();
+  }, [anchorWallet, refreshAnimals]);
 
   return (
     <StackContext.Provider
@@ -857,15 +1062,29 @@ export const StakingProvider = (props: Props) => {
         unstakeAnimal,
         claimStakingRewards,
         claimAllStakingRewards,
-        status,
+        animalsStatus,
+        stakedAnimalsStatus,
+        avaliableStakedAnimals,
+        setAvaliableStakedAnimals,
       }}
     >
       {props.children}
-
-      <div>
+      <div
+      // sx={{
+      //   '& .Toastify__toast': {
+      //     backgroundColor: '#7abfa7',
+      //     backdropFilter: 'blur(8px)',
+      //     color: 'rgb(233, 233, 233)',
+      //   },
+      //   '& .Toastify__close-button': {
+      //     color: '#fff !important',
+      //   },
+      // }}
+      >
+        {' '}
         <ToastContainer
           position='bottom-left'
-          autoClose={5000}
+          autoClose={4000}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

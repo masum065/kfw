@@ -25,7 +25,7 @@ export type StaticMetadata = {
 
 export const COLLECTION_CLAIM_DELAY = new anchor.BN(86400);
 
-export const FACTIONS = [{ name: 'student' }, { name: 'icecream' }];
+export const FACTIONS = [{ name: 'fractures' }, { name: 'main' }];
 
 const devnetConstants = {
   mainnet: MAINNET,
@@ -35,7 +35,7 @@ const devnetConstants = {
     'So11111111111111111111111111111111111111112'
   ),
   jungleKey: new anchor.web3.PublicKey(
-    '7QoMyJ9wyA2YioxsPnuQCeCEZX2oCqz7J2pPLBjxPqAq'
+    '9eKszppHauTFEvsytb21t9c1JcGSy8QkT3tTnYZ5rari'
   ),
 
   metadata: devnetMetadata as any as StaticMetadata[],
@@ -49,7 +49,7 @@ const mainnetConstants = {
     'So11111111111111111111111111111111111111112'
   ),
   jungleKey: new anchor.web3.PublicKey(
-    '7QoMyJ9wyA2YioxsPnuQCeCEZX2oCqz7J2pPLBjxPqAq'
+    '9eKszppHauTFEvsytb21t9c1JcGSy8QkT3tTnYZ5rari'
   ),
 
   metadata: mainnetMetadata as any as StaticMetadata[],
@@ -57,18 +57,6 @@ const mainnetConstants = {
 
 const constants = MAINNET ? mainnetConstants : devnetConstants;
 constants.metadata.forEach((mint) => {
-  mint.emissionsPerDay = mint.emissionsPerDay * 10 ** 9;
+  mint.emissionsPerDay = mint.emissionsPerDay * 10 ** 3;
 });
 export default constants;
-
-// Program ID: 1rRJRs5bN9WmfLGD5TXdy763Y43GssV3ox46aDz1eci
-// Jungle key: 7pfBoh7crcCLEzBsL9r4G8hSESUXxJPbkZEsNv83oD9U
-// Owner: Guh2LryMmKBL6zgSbABftS3p2Do6ZhEg78qXyYLjeaUY
-// Jungle: HVjoeMdteUui9jpMDTRtoYrwFrCy65SHJTh8bviwZyr8
-// Escrow: CuCBdkDTvSys2BgFfyxTaAM1fwnM7KnkBBiAYny9KZM8
-
-// Jungle key: 7QoMyJ9wyA2YioxsPnuQCeCEZX2oCqz7J2pPLBjxPqAq
-// Owner: DbcjAUdsKWqpzjxC3785M6w4LDdtJEjs9gKUpgs8v9mB
-// Program ID: 1rRJRs5bN9WmfLGD5TXdy763Y43GssV3ox46aDz1eci
-// Jungle: 4emntnnUJ8KReC4hwC9dkjKmScuEVKRBKjYHAis6jLaE
-// Escrow: 2UKxxUdyF2k6D8JEDZTmrQXDi9wkERhqPRdFDaDoxYWS

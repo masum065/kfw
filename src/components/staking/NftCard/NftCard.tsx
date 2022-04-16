@@ -1,21 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Animal } from '../../../contexts/Staking/types';
 import { useStack } from '../../../hooks/useStaking';
-import { ButtonGroup, SelectNFT, StyledNftItem } from './styles';
 
 interface Props {
   token: Animal;
   isStaked?: boolean;
-  activeBulk?: boolean;
-  limitOfSelection?: boolean;
+  redeemableReward?: (coin: Number | String | any) => void;
+  // activeBulk?: boolean;
+  // limitOfSelection?: boolean;
 }
 
 export const NftCard = ({
   token,
   isStaked,
-  activeBulk,
-  limitOfSelection,
-}: Props) => {
+  redeemableReward,
+}: // activeBulk,
+// limitOfSelection,
+Props) => {
   const {
     getPendingStakingRewards,
     fetchAnimal,
@@ -27,6 +28,17 @@ export const NftCard = ({
   const [augmentedAnimal, setAugmentedAnimal] = useState<Animal>();
   const [stakingPeriod, setStakingPeriod] = useState<Date>(new Date());
   const [redeemable, setRedeemable] = useState<number>(0);
+
+  const [multipliers, setMultipliers] = useState<{
+    total: number;
+    holdingsMultiplier: number;
+    weeklyMultiplier: number;
+  }>({ total: 1, holdingsMultiplier: 0, weeklyMultiplier: 0 });
+
+  const extraMultiplier = useMemo(
+    () => (multipliers?.total > 1 ? multipliers?.total : false),
+    [multipliers]
+  );
 
   const fetchAnimalStats = useCallback(async () => {
     setAugmentedAnimal(await fetchAnimal(token.mint));
@@ -57,53 +69,93 @@ export const NftCard = ({
 
   // handle Claim Earning
   const handleClaim = useCallback(async () => {
+    console.log(augmentedAnimal);
     if (!augmentedAnimal) return;
     await claimStakingRewards(augmentedAnimal);
+    console.log('claim');
     fetchAnimalStats();
   }, [augmentedAnimal, claimStakingRewards, fetchAnimalStats]);
 
   // pending rewords
+  // useEffect(() => {
+  //   if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
+  //   if (augmentedAnimal?.lastClaim && isStaked) {
+  //     const redeem = getPendingStakingRewards(augmentedAnimal, stakingPeriod);
+
+  //     return () => {
+  //       setRedeemable(redeem);
+  //     };
+  //   }
+  // }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards]);
+
   useEffect(() => {
     if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
     if (augmentedAnimal?.lastClaim && isStaked) {
-      const redeem = getPendingStakingRewards(augmentedAnimal, stakingPeriod);
+      const { rewards, multipliers } = getPendingStakingRewards(
+        augmentedAnimal,
+        stakingPeriod
+      );
+      setRedeemable(rewards);
+      setMultipliers(multipliers);
+      console.log(rewards);
+      //@ts-ignore
+      redeemableReward(rewards);
 
-      return () => {
-        setRedeemable(redeem);
-      };
+      return () => {};
     }
-  }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards]);
+  }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards, isStaked]);
   return (
-    <StyledNftItem>
-      <div className='token-info'>
-        {activeBulk ? (
-          <SelectNFT disabled={limitOfSelection} value={token.metadata.name}>
-            <img src={token.uriData.image} alt='' />
-          </SelectNFT>
-        ) : (
-          <img src={token.uriData.image} alt='' />
+    <div>
+      <div className='warriorTabContentBox'>
+        {/* {activeBulk ? ( */}
+        {/* <SelectNFT disabled={limitOfSelection} value={token.metadata.name}> */}
+        {/* <img src={token.uriData.image} alt='' /> */}
+        {/* </SelectNFT> */}
+        {/* ) : ( */}
+        <img src={token.uriData.image} alt='' />
+        {/* )} */}
+        <span>{token.uriData.name}</span>
+        {extraMultiplier && (
+          <div>
+            <h6>Extra Multiplier:</h6>
+            <p>{extraMultiplier}X</p>
+          </div>
         )}
-        <p className='name'>{token.uriData.name}</p>
 
-        <div className='multiplier-box'>
+        {augmentedAnimal?.lastClaim && isStaked ? (
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className='generalGreenBtn small' onClick={handleUnstake}>
+              Unstake
+            </button>
+            <button className='generalGreenBtn small' onClick={handleClaim}>
+              Claim
+            </button>
+          </div>
+        ) : (
+          <button className='generalGreenBtn small' onClick={handleStake}>
+            Stake
+          </button>
+        )}
+
+        {/* <div className='multiplier-box'>
           <span>Earning Per Day</span>{' '}
           <span>
             <span style={{ fontSize: 10, textTransform: 'lowercase' }}>x</span>
             {(token?.emissionsPerDay || 0) / 10 ** 9}
           </span>
-        </div>
+        </div> */}
 
-        {augmentedAnimal?.lastClaim && isStaked ? (
+        {/* {augmentedAnimal?.lastClaim && isStaked ? (
           <div className='multiplier-box'>
             <span>Pending Earnings</span>{' '}
             <span>{redeemable.toPrecision(5)}</span>
           </div>
         ) : (
           ''
-        )}
+        )} */}
       </div>
 
-      <ButtonGroup>
+      {/* <ButtonGroup>
         {augmentedAnimal?.lastClaim && isStaked ? (
           <>
             <button onClick={handleClaim}>Claim Earning</button>
@@ -112,7 +164,7 @@ export const NftCard = ({
         ) : (
           <button onClick={handleStake}>Stake</button>
         )}
-      </ButtonGroup>
-    </StyledNftItem>
+      </ButtonGroup> */}
+    </div>
   );
 };

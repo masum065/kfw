@@ -3,7 +3,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-ant-design';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
   ConnectionProvider,
-  WalletProvider,
+  WalletProvider
 } from '@solana/wallet-adapter-react';
 import {
   LedgerWalletAdapter,
@@ -12,7 +12,7 @@ import {
   SolflareWalletAdapter,
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
-  TorusWalletAdapter,
+  TorusWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import 'antd/dist/antd.min.css';
@@ -61,14 +61,14 @@ export const App = () => {
             <div className='mainWrapper'>
               <Routes>
                 <Route
-                  path='/staking'
+                  path='/'
                   element={
                     <StakingProvider connection={connection}>
                       <Staking />
                     </StakingProvider>
                   }
                 />
-                <Route path='/' element={<Gallery />} />
+                <Route path='/gallery' element={<Gallery />} />
               </Routes>
             </div>
           </WalletModalProvider>

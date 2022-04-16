@@ -12,6 +12,8 @@ export interface Jungle {
   animalsStaked: anchor.BN;
   maximumRarity: anchor.BN;
   maximumRarityMultiplier: anchor.BN;
+  weeklyMultiplier: anchor.BN;
+  holdingsMultiplier: anchor.BN;
   baseWeeklyEmissions: anchor.BN;
   root: number[];
 }
@@ -23,6 +25,11 @@ export interface Animal {
   emissionsPerDay: number;
   faction: string;
   lastClaim?: Date;
+  stakedAt?: Date;
+}
+
+export interface StakerInfo {
+  holdings: number;
 }
 
 export interface ContextValues {
@@ -31,7 +38,17 @@ export interface ContextValues {
   stakedAnimals: Animal[];
   userAccount?: TokenAccount;
   getRarityMultiplier: (animal: Animal) => number | undefined;
-  getPendingStakingRewards: (animal: Animal, since: Date) => number;
+  getPendingStakingRewards: (
+    animal: Animal,
+    since: Date
+  ) => {
+    rewards: number;
+    multipliers: {
+      total: number;
+      holdingsMultiplier: number;
+      weeklyMultiplier: number;
+    };
+  };
   fetchAnimal: (mint: PublicKey) => Promise<Animal | undefined>;
   refreshAnimals: () => Promise<void>;
   fetchUserAccount: () => Promise<void>;
@@ -40,5 +57,10 @@ export interface ContextValues {
   unstakeAnimal: (animal: Animal) => Promise<void>;
   claimStakingRewards: (animal: Animal) => Promise<void>;
   claimAllStakingRewards: () => Promise<void>;
-  status: any;
+  stakedAnimalsStatus: any;
+  animalsStatus: any;
+  avaliableStakedAnimals: Animal[];
+  setAvaliableStakedAnimals: (
+    _avaliableStakedAnimals?: Animal[]
+  ) => Promise<void>;
 }

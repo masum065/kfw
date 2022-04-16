@@ -1,5 +1,5 @@
 export type Jungle = {
-  version: '0.1.0';
+  version: '0.0.0';
   name: 'jungle';
   instructions: [
     {
@@ -67,6 +67,22 @@ export type Jungle = {
           type: 'u64';
         },
         {
+          name: 'maximumWeeklyMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'weeklyMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'maximumHoldingsMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'holdingsMultiplier';
+          type: 'u64';
+        },
+        {
           name: 'baseWeeklyEmissions';
           type: 'u64';
         },
@@ -108,6 +124,22 @@ export type Jungle = {
         },
         {
           name: 'maxMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'maximumWeeklyMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'weeklyMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'maximumHoldingsMultiplier';
+          type: 'u64';
+        },
+        {
+          name: 'holdingsMultiplier';
           type: 'u64';
         },
         {
@@ -173,6 +205,37 @@ export type Jungle = {
       ];
     },
     {
+      name: 'initStaker';
+      accounts: [
+        {
+          name: 'jungle';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'stakerInfo';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'staker';
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: 'bumps';
+          type: 'u8';
+        }
+      ];
+    },
+    {
       name: 'stakeAnimal';
       accounts: [
         {
@@ -187,6 +250,11 @@ export type Jungle = {
         },
         {
           name: 'animal';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'stakerInfo';
           isMut: true;
           isSigner: false;
         },
@@ -275,6 +343,11 @@ export type Jungle = {
           isSigner: false;
         },
         {
+          name: 'stakerInfo';
+          isMut: true;
+          isSigner: false;
+        },
+        {
           name: 'staker';
           isMut: true;
           isSigner: true;
@@ -298,11 +371,6 @@ export type Jungle = {
           name: 'tokenProgram';
           isMut: false;
           isSigner: false;
-        },
-        {
-          name: 'clock';
-          isMut: false;
-          isSigner: false;
         }
       ];
       args: [];
@@ -322,6 +390,11 @@ export type Jungle = {
         },
         {
           name: 'animal';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'stakerInfo';
           isMut: true;
           isSigner: false;
         },
@@ -414,6 +487,22 @@ export type Jungle = {
             type: 'u64';
           },
           {
+            name: 'maximumWeeklyMultiplier';
+            type: 'u64';
+          },
+          {
+            name: 'weeklyMultiplier';
+            type: 'u64';
+          },
+          {
+            name: 'maximumHoldingsMultiplier';
+            type: 'u64';
+          },
+          {
+            name: 'holdingsMultiplier';
+            type: 'u64';
+          },
+          {
             name: 'baseWeeklyEmissions';
             type: 'u64';
           },
@@ -460,6 +549,30 @@ export type Jungle = {
           {
             name: 'lastClaim';
             type: 'i64';
+          },
+          {
+            name: 'stakedAt';
+            type: 'i64';
+          }
+        ];
+      };
+    },
+    {
+      name: 'stakerInfo';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'bumps';
+            type: 'u8';
+          },
+          {
+            name: 'staker';
+            type: 'publicKey';
+          },
+          {
+            name: 'holdings';
+            type: 'u64';
           }
         ];
       };
@@ -498,6 +611,10 @@ export type Jungle = {
           {
             name: 'deposit';
             type: 'u8';
+          },
+          {
+            name: 'stakerInfo';
+            type: 'u8';
           }
         ];
       };
@@ -505,28 +622,28 @@ export type Jungle = {
   ];
   errors: [
     {
-      code: 6000;
+      code: 300;
       name: 'InvalidMultiplier';
       msg: 'Invalid multiplier, must be greater than 10000';
     },
     {
-      code: 6001;
+      code: 301;
       name: 'TooEarly';
       msg: 'Too early to stake';
     },
     {
-      code: 6002;
+      code: 302;
       name: 'InvalidProof';
       msg: 'Merkle proof is invalid';
     }
   ];
   metadata: {
-    address: '1rRJRs5bN9WmfLGD5TXdy763Y43GssV3ox46aDz1eci';
+    address: 'JAiLsp5k6ANQAy9UcJC9TfTWieY5Afo42ykihpTeVk8L';
   };
 };
 
 export const IDL: Jungle = {
-  version: '0.1.0',
+  version: '0.0.0',
   name: 'jungle',
   instructions: [
     {
@@ -594,6 +711,22 @@ export const IDL: Jungle = {
           type: 'u64',
         },
         {
+          name: 'maximumWeeklyMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'weeklyMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'maximumHoldingsMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'holdingsMultiplier',
+          type: 'u64',
+        },
+        {
           name: 'baseWeeklyEmissions',
           type: 'u64',
         },
@@ -635,6 +768,22 @@ export const IDL: Jungle = {
         },
         {
           name: 'maxMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'maximumWeeklyMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'weeklyMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'maximumHoldingsMultiplier',
+          type: 'u64',
+        },
+        {
+          name: 'holdingsMultiplier',
           type: 'u64',
         },
         {
@@ -700,6 +849,37 @@ export const IDL: Jungle = {
       ],
     },
     {
+      name: 'initStaker',
+      accounts: [
+        {
+          name: 'jungle',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'stakerInfo',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'staker',
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: 'bumps',
+          type: 'u8',
+        },
+      ],
+    },
+    {
       name: 'stakeAnimal',
       accounts: [
         {
@@ -714,6 +894,11 @@ export const IDL: Jungle = {
         },
         {
           name: 'animal',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'stakerInfo',
           isMut: true,
           isSigner: false,
         },
@@ -802,6 +987,11 @@ export const IDL: Jungle = {
           isSigner: false,
         },
         {
+          name: 'stakerInfo',
+          isMut: true,
+          isSigner: false,
+        },
+        {
           name: 'staker',
           isMut: true,
           isSigner: true,
@@ -826,11 +1016,6 @@ export const IDL: Jungle = {
           isMut: false,
           isSigner: false,
         },
-        {
-          name: 'clock',
-          isMut: false,
-          isSigner: false,
-        },
       ],
       args: [],
     },
@@ -849,6 +1034,11 @@ export const IDL: Jungle = {
         },
         {
           name: 'animal',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'stakerInfo',
           isMut: true,
           isSigner: false,
         },
@@ -941,6 +1131,22 @@ export const IDL: Jungle = {
             type: 'u64',
           },
           {
+            name: 'maximumWeeklyMultiplier',
+            type: 'u64',
+          },
+          {
+            name: 'weeklyMultiplier',
+            type: 'u64',
+          },
+          {
+            name: 'maximumHoldingsMultiplier',
+            type: 'u64',
+          },
+          {
+            name: 'holdingsMultiplier',
+            type: 'u64',
+          },
+          {
             name: 'baseWeeklyEmissions',
             type: 'u64',
           },
@@ -988,6 +1194,30 @@ export const IDL: Jungle = {
             name: 'lastClaim',
             type: 'i64',
           },
+          {
+            name: 'stakedAt',
+            type: 'i64',
+          },
+        ],
+      },
+    },
+    {
+      name: 'stakerInfo',
+      type: {
+        kind: 'struct',
+        fields: [
+          {
+            name: 'bumps',
+            type: 'u8',
+          },
+          {
+            name: 'staker',
+            type: 'publicKey',
+          },
+          {
+            name: 'holdings',
+            type: 'u64',
+          },
         ],
       },
     },
@@ -1026,28 +1256,32 @@ export const IDL: Jungle = {
             name: 'deposit',
             type: 'u8',
           },
+          {
+            name: 'stakerInfo',
+            type: 'u8',
+          },
         ],
       },
     },
   ],
   errors: [
     {
-      code: 6000,
+      code: 300,
       name: 'InvalidMultiplier',
       msg: 'Invalid multiplier, must be greater than 10000',
     },
     {
-      code: 6001,
+      code: 301,
       name: 'TooEarly',
       msg: 'Too early to stake',
     },
     {
-      code: 6002,
+      code: 302,
       name: 'InvalidProof',
       msg: 'Merkle proof is invalid',
     },
   ],
   metadata: {
-    address: '1rRJRs5bN9WmfLGD5TXdy763Y43GssV3ox46aDz1eci',
+    address: 'JAiLsp5k6ANQAy9UcJC9TfTWieY5Afo42ykihpTeVk8L',
   },
 };

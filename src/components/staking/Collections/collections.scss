@@ -1,0 +1,426 @@
+.kfwOverviewBoxesWrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 20px 0 0 0;
+  .row {
+    width: 100%;
+  }
+  .kfwOverviewSmallBox {
+    display: flex;
+    flex-wrap: wrap;
+    width: 265px;
+    height: 265px;
+    align-items: center;
+    justify-content: center;
+    padding: 33px;
+    position: relative;
+    text-decoration: none;
+    &.kfwOverviewBox1Img {
+      background: url(../../../assets/img/warrior-training.png) no-repeat;
+    }
+    &.kfwOverviewBox2Img {
+      background: url(../../../assets/img/recruit-warrior.png) no-repeat;
+    }
+    &.kfwOverviewBox3Img {
+      background: url(../../../assets/img/mysterious-warrior.png) no-repeat;
+    }
+    &:hover {
+      &:before {
+        content: '';
+        background: url(../../../assets/img/border.png) no-repeat;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+    }
+    h3 {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 36px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #000000;
+      flex-direction: column;
+      margin: 0;
+      span {
+        font-size: 20px;
+        line-height: 26px;
+        display: block;
+      }
+    }
+  }
+}
+.warriorTrainingTopWrap {
+  h3 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 47px;
+    line-height: 55px;
+    text-align: center;
+    color: #0c5f08;
+    strong {
+    }
+  }
+  .warriorDropdown {
+    max-width: 90%;
+    margin: auto;
+    width: auto;
+    position: relative;
+    .nav-link {
+      background: rgba(153, 237, 161, 0.47);
+      border-radius: 20px;
+      width: 100%;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 26px;
+      line-height: 38px;
+      color: #000000;
+      position: relative;
+      &:after {
+        border: 0;
+        background: none;
+      }
+    }
+    .dropdown-menu {
+      background: rgba(231, 255, 233, 0.9);
+      border-radius: 20px;
+      padding: 15px;
+      p {
+        font-size: 18px;
+        color: #000;
+        margin-bottom: 10px;
+      }
+    }
+    .nav-link[aria-expanded='false'] {
+      &:after {
+        content: '';
+        position: absolute;
+        right: 19px;
+        bottom: 13px;
+        width: 25px;
+        height: 25px;
+        background: url(../../../assets/img/arrow.png) no-repeat;
+        background-size: cover;
+      }
+    }
+    .nav-link[aria-expanded='true'] {
+      &:after {
+        content: '';
+        position: absolute;
+        right: 19px;
+        bottom: 13px;
+        width: 25px;
+        height: 25px;
+        background: url(../../../assets/img/arrow.png) no-repeat;
+        background-size: cover;
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+.kfwConnectBox {
+  background: url(../../../assets/img/warrior-training-bg.png) no-repeat;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: 580px;
+  margin-bottom: -120px;
+  background-size: contain;
+
+  .generalGreenBtn {
+    text-transform: uppercase;
+    margin-left: 180px;
+    padding: 7px 32px;
+    font-size: 36px;
+  }
+  &.alienImg {
+    background: url(../../../assets/img/kfw-alien.png) no-repeat;
+    height: 580px;
+    width: 100%;
+    background-size: contain;
+    .generalGreenBtn {
+      margin-left: 180px;
+    }
+  }
+}
+.warriorTrainingTabs {
+  margin-top: 50px;
+  .nav-tabs {
+    justify-content: center;
+    border: 0;
+    .nav-item {
+      margin-right: 15px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  .tab-content {
+    padding: 150px 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    .myWarriorsTextWrap {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      span {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 22px;
+        line-height: 26px;
+        color: #000000;
+        margin-right: 18px;
+      }
+    }
+  }
+
+  .tab-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+  }
+  .tab-link {
+    background: rgba(153, 237, 161, 0.47);
+    border-radius: 20px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 27px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #000000;
+    border: 0;
+    padding: 8px 30px;
+    position: relative;
+    min-width: 238px;
+    max-width: 238px;
+    justify-content: center;
+    &.active {
+      background: #0c5f08;
+      color: #fff;
+    }
+    &:hover {
+      &:before {
+        content: '';
+        background: url(../../../assets/img/atr-outline.png) no-repeat;
+        background-size: cover;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+.warriorsTrainingTabContent {
+  .warriorTabContentBox {
+    margin-bottom: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
+    text-decoration: none;
+    img {
+      width: 100%;
+    }
+    p {
+      margin: 0;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 23px;
+      color: #000000;
+    }
+    span {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 23px;
+      color: #000000;
+    }
+  }
+}
+.bottomBoxesWrap {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 100%;
+  margin: 20px 0 0 0;
+  .box1 {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    background: rgba(153, 237, 161, 0.47);
+    border-radius: 20px;
+    padding: 7px 36px;
+    span {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 27px;
+      text-align: center;
+      color: #000000;
+    }
+  }
+  .box2 {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    background: rgba(153, 237, 161, 0.47);
+    border-radius: 20px;
+    margin: 0 15px;
+    padding: 7px 36px;
+    span {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 27px;
+      text-align: center;
+      color: #000000;
+    }
+  }
+}
+.warriorTrainingWrenchBoxWrap {
+  margin: 35px 0 0 0;
+  &.padtop117 {
+    padding-top: 117px;
+  }
+  .warriorWrenchHeading {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 32px;
+    color: #000000;
+    margin-bottom: 15px;
+  }
+  .generalGreenBtn {
+    width: 194px;
+    margin: 35px auto 0;
+    max-width: unset;
+    text-transform: uppercase;
+    font-size: 28px;
+  }
+  .row {
+    max-width: 75%;
+    margin: auto;
+    .warriorTabContentBox {
+      margin-bottom: 15px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      display: flex;
+      text-decoration: none;
+      img {
+        width: 100%;
+      }
+      p {
+        margin: 0;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 23px;
+        color: #000000;
+      }
+      span {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 23px;
+        color: #000000;
+      }
+      .generalGreenBtn {
+        width: auto;
+        margin: 15px auto 0;
+        max-width: unset;
+        text-transform: capitalize;
+        font-size: 20px;
+        padding: 5px 13px;
+      }
+    }
+  }
+}
+.successModal {
+  .modal-dialog {
+    max-width: 360px;
+    padding: 0;
+    .modal-content {
+      border: 0;
+      box-shadow: 0 0 0;
+      background: none;
+      padding: 0;
+      .modal-body {
+        border: 0;
+        box-shadow: 0 0 0;
+        padding: 0;
+        background: none;
+        border-radius: 6px;
+        .successImg {
+          width: 100%;
+          border-radius: 6px;
+        }
+      }
+      .btn-close {
+        position: absolute;
+        right: 20px;
+        bottom: 19px;
+        border: 0;
+        background: none;
+        z-index: 999;
+        width: 24px;
+        height: 24px;
+        &:hover {
+          outline: 0;
+          box-shadow: 0 0 0;
+        }
+        &:active {
+          outline: 0;
+          box-shadow: 0 0 0;
+        }
+        &:focus {
+          outline: 0;
+          box-shadow: 0 0 0;
+        }
+        img {
+          width: 24px;
+        }
+      }
+    }
+  }
+}
+.gameRuleText {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 36px;
+  margin: auto;
+  text-align: center;
+  color: #0c5f08;
+  padding: 20px 0;
+}
+.shuffleGameCardWrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 50px 0;
+  .row {
+    max-width: 85%;
+    margin: auto;
+  }
+  .cardShuffle {
+    .fakeCardShuffle {
+      width: 100%;
+    }
+  }
+}

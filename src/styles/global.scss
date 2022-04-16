@@ -7,14 +7,27 @@
 //     --Blinker:
 // }
 
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: 'Blinker', sans-serif;
-  background: rgb(255, 200, 60);
   background: linear-gradient(
     0deg,
     rgba(255, 200, 60, 1) 0%,
     rgba(255, 251, 228, 1) 75%
   );
+  // position: fixed;
+
+  &::before {
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    // position: fixed;
+    content: '';
+    z-index: -1;
+  }
 }
 .mainWrapper {
   display: flex;
@@ -62,6 +75,11 @@ body {
   justify-content: center;
   &:hover {
     color: #000;
+  }
+
+  &.small{
+    padding: 3px 10px;
+    font-size: 15px;
   }
 }
 .navbar-toggler {

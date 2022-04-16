@@ -1,260 +1,232 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Checkbox, Skeleton } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
+import { Animal } from '../../../contexts/Staking/types';
 import { useStack } from '../../../hooks/useStaking';
-import { StakingCounter } from '../Counter/StakingCounter';
 import { NftCard } from '../NftCard/NftCard';
-import {
-  Root,
-  RootWrapper,
-  StakeTitle,
-  StyledClaimActionWrapper,
-  StyledNFTContainer,
-  StyledStackContainer,
-  StyledSubTitle,
-} from './styles';
+import './collections.scss';
 
-export const CollectionsV2 = () => {
-  const { animals, stakedAnimals, claimAllStakingRewards, status } = useStack();
-  const { connected } = useWallet();
-  const [animalsReady, setAnimalsReady] = useState(false);
+export const Collections = () => {
+  const [activeTab, setActiveTab] = useState<number>(1);
+  const wallet = useWallet();
+  const [selected, setSelected] = useState('');
+  const [ready, setReady] = useState(false);
+  const [meditation, setMeditation] = useState('');
+  const [redeemableRewards, setRedeemableRewards] = useState<number[]>([]);
+  const [augment, setAugment] = useState<Animal | null>(null);
+  const [checkBoxValues, setCheckboxValues] = useState<string[]>([]);
   const [bulk, setBulk] = useState(false);
-  const [selectedNfts, setSelectedNfts] = useState<string[]>([]);
-  const [stakedAnimalsReady, setStakedAnimalsReady] = useState(false);
+
+  const {
+    animals,
+    stakedAnimals,
+    refreshAnimals,
+    userAccount,
+    stakeAnimal,
+    unstakeAnimal,
+    claimStakingRewards,
+    claimAllStakingRewards,
+  } = useStack();
+
+  const handleClickAway = () => {
+    setSelected('');
+    setCheckboxValues([]);
+    setAugment(null);
+  };
+
+  const handleStake = useCallback(async () => {
+    if (!augment) return;
+    await stakeAnimal(augment);
+    setSelected('');
+    setAugment(null);
+  }, [augment, stakeAnimal]);
+
+  const handleUnStake = useCallback(async () => {
+    if (!augment) return;
+    await unstakeAnimal(augment);
+    setSelected('');
+    setAugment(null);
+  }, [augment, unstakeAnimal]);
+
+  const handleClaim = useCallback(async () => {
+    console.log('claim', augment);
+    if (!augment) return;
+    await claimStakingRewards(augment);
+    setSelected('');
+    setAugment(null);
+  }, [augment, unstakeAnimal]);
 
   const handleClaimAll = useCallback(async () => {
+    onSetClaimListOnStorage();
     await claimAllStakingRewards();
-  }, [stakedAnimals]);
+  }, [unstakeAnimal]);
 
   // loading state and check has animals
   useEffect(() => {
-    setAnimalsReady(false);
+    setReady(false);
     if (animals.length) {
-      setAnimalsReady(false);
+      setReady(false);
       return;
     }
-    if (!animals.length && !animalsReady) {
+    if (!animals.length && !ready) {
       const timeoutID = window.setTimeout(() => {
-        setAnimalsReady(true);
+        setReady(true);
       }, 1000);
       return () => window.clearTimeout(timeoutID);
     }
-  }, [animals.length]);
+  }, [refreshAnimals, animals.length]);
 
   useEffect(() => {
-    if (animalsReady && animals.length) {
-      setAnimalsReady(false);
+    if (ready && animals.length) {
+      setReady(false);
     }
-  }, [animalsReady, animals]);
+  }, [ready, animals]);
 
-  // loading state and check has staked animals
-  useEffect(() => {
-    setStakedAnimalsReady(false);
-    if (stakedAnimals.length) {
-      setStakedAnimalsReady(false);
+  const handleRefresh = async () => {
+    await refreshAnimals();
+  };
+
+  const updateValue = (coin: number, index: number) => {
+    if (!coin) return;
+    let redeem: number[] = redeemableRewards.slice(0, stakedAnimals.length);
+    redeem[index] = Number(coin.toString().split('e')[0]);
+    setRedeemableRewards([...redeem]);
+  };
+
+  const handleCheckbox = (name: string) => {
+    if (!bulk) {
+      setCheckboxValues([name]);
       return;
+    } else {
+      if (checkBoxValues.includes(name)) {
+        const newList = checkBoxValues.filter((value) => value !== name);
+        setCheckboxValues(newList);
+      } else {
+        if (checkBoxValues.length >= 10) return;
+        setCheckboxValues([...checkBoxValues, name]);
+      }
     }
-    if (!stakedAnimals.length && !stakedAnimalsReady) {
-      const timeoutID = window.setTimeout(() => {
-        setStakedAnimalsReady(true);
-      }, 1000);
-      return () => window.clearTimeout(timeoutID);
-    }
-  }, [stakedAnimals.length]);
-
-  useEffect(() => {
-    if (stakedAnimalsReady && stakedAnimals.length) {
-      setStakedAnimalsReady(false);
-    }
-  }, [stakedAnimalsReady, stakedAnimals]);
-
-  // handle bulk selection
-  const onSelectChange = (checkedValues: any) => {
-    console.log('checked = ', checkedValues);
-    window.sessionStorage.setItem(
-      'claimItemList',
-      JSON.stringify(checkedValues)
-    );
-
-    setSelectedNfts(checkedValues);
   };
 
   useEffect(() => {
-    if (stakedAnimals.length <= 10) {
-      const autoClaimList = stakedAnimals.map((token) => {
-        return token.metadata.name;
-      });
+    window.sessionStorage.setItem(
+      'claimItemList',
+      JSON.stringify(checkBoxValues)
+    );
+  }, [checkBoxValues]);
 
+  const handleClearClaimList = () => {
+    setCheckboxValues([]);
+    setSelected('');
+    window.sessionStorage.removeItem('claimItemList');
+  };
+
+  const onSetClaimListOnStorage = () => {
+    if (stakedAnimals.length <= 10) {
+      const autoClaimList = stakedAnimals.map((token, index) => {
+        return `${token.metadata.name}~${index}`;
+      });
       window.sessionStorage.setItem(
         'claimItemList',
         JSON.stringify(autoClaimList)
       );
     }
-  }, [stakedAnimals]);
-
-  // scrolling conditions
-
-  const [scrollY, setScrollY] = useState(0);
-
+  };
   useEffect(() => {
-    function watchScroll() {
-      window.addEventListener('scroll', () => setScrollY(window.pageYOffset));
-    }
-    watchScroll();
-    // Remove listener (like componentWillUnmount)
-    return () => {
-      window.removeEventListener('scroll', () =>
-        setScrollY(window.pageYOffset)
-      );
-    };
-  }, []);
+    onSetClaimListOnStorage();
+  }, [stakedAnimals]);
+  // console.log(animalsStatus);
+
+  console.log('Staked NFTs', stakedAnimals);
 
   return (
-    <Root>
-      <StakeTitle style={{ height: connected ? '100%' : '40vh' }}>
-        {!connected && <StakingCounter />}
-        {connected ? 'STAKING' : 'Please connect your wallet first to stake'}
-      </StakeTitle>
-
-      {connected ? (
-        <StyledStackContainer>
-          <div>
-            <StyledSubTitle>Unstaked Students</StyledSubTitle>
-
-            <RootWrapper>
-              {animalsReady && !animals.length && status.animals.loadingEnd ? (
-                <>
-                  {stakedAnimals.length ? (
-                    <h2 className='info'>
-                      All Students are Staked Get some More?{' '}
-                      <a
-                        href='https://magiceden.io/marketplace/solana_monkey_university'
-                        target='_blank'
-                      >
-                        Click Here
-                      </a>
-                    </h2>
-                  ) : (
-                    <h2 className='info'>
-                      You currently have no Students.
-                      <a
-                        href='https://magiceden.io/marketplace/solana_monkey_university'
-                        target='_blank'
-                      >
-                        Buy Now
-                      </a>
-                    </h2>
-                  )}
-                </>
-              ) : (
-                <StyledNFTContainer>
-                  {status.animals.loading
-                    ? [...Array(3)].map((arr, i) => (
-                        <Skeleton.Avatar
-                          key={i}
-                          active
-                          shape='square'
-                          size={200}
-                        />
-                      ))
-                    : animals?.map((animal) => (
-                        <NftCard
-                          key={animal.uriData.image}
-                          isStaked={false}
-                          token={animal}
-                        />
-                      ))}
-                </StyledNFTContainer>
-              )}
-            </RootWrapper>
-          </div>
-          <div>
-            <StyledSubTitle>Staked Students</StyledSubTitle>
-
-            <RootWrapper>
-              {stakedAnimals.length || status.stakedAnimals.loading ? (
-                <Checkbox.Group
-                  style={{ width: '100%' }}
-                  value={selectedNfts}
-                  onChange={onSelectChange}
-                >
-                  <StyledNFTContainer>
-                    {stakedAnimals.length
-                      ? stakedAnimals?.map((animal) => (
-                          <NftCard
-                            key={animal.uriData.image}
-                            isStaked={true}
-                            token={animal}
-                            activeBulk={bulk}
-                            limitOfSelection={selectedNfts.length >= 10}
-                          />
-                        ))
-                      : status.stakedAnimals.loading
-                      ? [...Array(3)].map((arr, i) => (
-                          <Skeleton.Avatar
-                            key={i}
-                            active
-                            shape='square'
-                            size={200}
-                          />
-                        ))
-                      : ''}
-                  </StyledNFTContainer>
-                </Checkbox.Group>
-              ) : (
-                ''
-              )}
-              {!stakedAnimals.length && !status.stakedAnimals.loading ? (
-                <h2 className='info'>No Students are Staked... yet {`;)`}</h2>
-              ) : (
-                ''
-              )}
-            </RootWrapper>
-          </div>
-        </StyledStackContainer>
-      ) : (
-        ''
-      )}
-
-      <StyledClaimActionWrapper
-        style={{ bottom: scrollY > 20 ? '3%' : '-20%' }}
-      >
-        {!stakedAnimals.length ? (
-          ''
-        ) : stakedAnimals.length > 10 ? (
-          <>
-            {bulk ? (
-              <>
-                <button onClick={claimAllStakingRewards}>
-                  Claim {selectedNfts.length} Reward
-                </button>
-                <button
-                  onClick={() => {
-                    setBulk(false);
-                    onSelectChange(null);
-                    setSelectedNfts([]);
-                    window.sessionStorage.removeItem('claimItemList');
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
+    <div className='contentContainer'>
+      <div className='aboutContainerWrap'>
+        <div className='container'>
+          <div className='warriorTrainingTabs'>
+            <div className='tab-buttons'>
               <button
-                onClick={() => {
-                  setBulk(!bulk);
-                  setSelectedNfts([]);
-                  window.sessionStorage.removeItem('claimItemList');
-                }}
+                onClick={() => setActiveTab(1)}
+                className={activeTab === 1 ? 'tab-link active' : 'tab-link'}
               >
-                Bulk Claim (max 10)
+                My Warriors
               </button>
-            )}
-          </>
-        ) : (
-          <button onClick={handleClaimAll}>Claim All Earnings</button>
-        )}
-      </StyledClaimActionWrapper>
-    </Root>
+              <button
+                onClick={() => setActiveTab(2)}
+                className={activeTab === 2 ? 'tab-link active' : 'tab-link'}
+              >
+                Warriors in Training
+              </button>
+            </div>
+            <div className='tab-content' id='myTabContent'>
+              <div
+                style={{ display: activeTab === 1 ? 'flex' : 'none' }}
+                className={
+                  animals.length
+                    ? 'warriorsTrainingTabContent'
+                    : 'myWarriorsTextWrap '
+                }
+              >
+                {animals.length ? (
+                  <div className='row'>
+                    {animals.map((token, index) => (
+                      <div key={index} className='col-md-2'>
+                        <NftCard token={token} isStaked={false} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <span>You currenty have no Warriors.</span>
+                    <a
+                      href='https://www.magiceden.io/marketplace/kfw'
+                      className='generalGreenBtn'
+                    >
+                      Buy now
+                    </a>
+                  </>
+                )}
+              </div>
+
+              <div
+                style={{ display: activeTab === 2 ? 'block' : 'none' }}
+                className='warriorsTrainingTabContent'
+              >
+                <div className='row'>
+                  {stakedAnimals.map((token, index) => (
+                    <div key={index} className='col-md-2'>
+                      <NftCard
+                        redeemableReward={(coin) =>
+                          updateValue(Number(coin), index)
+                        }
+                        token={token}
+                        isStaked={true}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className='bottomBoxesWrap'>
+                  <div className='box1'>
+                    <span>Your earnings:</span>
+                  </div>
+                  <div className='box2'>
+                    <span>
+                      {redeemableRewards
+                        ?.reduce((a, b) => a + b, 0)
+                        .toFixed(3) || '000'}{' '}
+                      KFWT
+                    </span>
+                  </div>
+                  <div className='box3'>
+                    <p style={{ margin: 0 }} className='generalGreenBtn'>
+                      Claim all
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

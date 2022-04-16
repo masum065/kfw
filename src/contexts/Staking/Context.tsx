@@ -1,12 +1,15 @@
 import { PublicKey } from '@solana/web3.js';
 import { createContext } from 'react';
-import { ContextValues } from './types';
+import { Animal, ContextValues } from './types';
 
 export const StackContext = createContext<ContextValues>({
   animals: [],
   stakedAnimals: [],
   getRarityMultiplier: () => 0,
-  getPendingStakingRewards: () => 0,
+  getPendingStakingRewards: () => ({
+    rewards: 0,
+    multipliers: { total: 1, holdingsMultiplier: 0, weeklyMultiplier: 0 },
+  }),
   fetchAnimal: (mint: PublicKey) => new Promise(() => {}),
   refreshAnimals: () => new Promise(() => {}),
   fetchUserAccount: () => new Promise(() => {}),
@@ -15,5 +18,9 @@ export const StackContext = createContext<ContextValues>({
   unstakeAnimal: () => new Promise(() => {}),
   claimStakingRewards: () => new Promise(() => {}),
   claimAllStakingRewards: () => new Promise(() => {}),
-  status: {},
+  stakedAnimalsStatus: {},
+  animalsStatus: {},
+  avaliableStakedAnimals: [],
+  setAvaliableStakedAnimals: (_avaliableStakedAnimals?: Animal[]) =>
+    new Promise(() => {}),
 });
