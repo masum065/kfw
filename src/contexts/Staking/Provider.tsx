@@ -1662,6 +1662,7 @@ export const StakingProvider = (props: Props) => {
         );
       })
     );
+
     try {
       const signature = await wallet.sendTransaction(
         transaction,
