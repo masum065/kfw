@@ -104,7 +104,6 @@ Props) => {
       return () => {};
     }
   }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards, isStaked]);
-  console.log(token)
   return (
     <div>
       <div className='warriorTabContentBox'>
