@@ -4,7 +4,7 @@ import { Animal } from '../../../contexts/Staking/types';
 import { useStack } from '../../../hooks/useStaking';
 import { NftCard } from '../NftCard/NftCard';
 import './collections.scss';
-
+const val: [string, unknown][] = [];
 export const Collections = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const wallet = useWallet();
@@ -111,20 +111,30 @@ export const Collections = () => {
   // const multipliers = useMemo(() => getMultipliers(), []);
 
   useEffect(() => {
-    setMultipliers(getMultipliers().list);
-  }, []);
-
-  useEffect(() => {
-    if (!multipliers) {
-      getMultipliers();
+    if (!val.length) {
+      setMultipliers(getMultipliers().list);
     }
   });
 
-  const val: [string, unknown][] = [];
-  var result = Object.entries(multipliers).map((value, key) => {
-    val.push(value);
-  });
+  // const [val, setVal] = useState
 
+  useEffect(() => {
+    if (val.length === 0) {
+      console.log('val', multipliers);
+      Object.entries(multipliers).map((value, key) => {
+        val.push(value);
+        console.log(value);
+      });
+    }
+  }, [stakedAnimals]);
+  // var result =
+
+  useEffect(() => {
+    if (!val.length) {
+      getMultipliers();
+      return;
+    }
+  }, [val]);
   return (
     <div className='contentContainer position-relative'>
       <div className='aboutContainerWrap'>

@@ -1713,6 +1713,7 @@ export const StakingProvider = (props: Props) => {
   const refreshAnimals = useCallback(async () => {
     setAnimals([]);
     setStakedAnimals([]);
+    getMultipliers();
     await fetchJungle();
     await fetchAnimals();
     await fetchStakedAnimals();
