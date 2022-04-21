@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Animal } from '../../../contexts/Staking/types';
+import { Animal, Rewards } from '../../../contexts/Staking/types';
 import { useStack } from '../../../hooks/useStaking';
 
 interface Props {
@@ -27,7 +27,8 @@ Props) => {
 
   const [augmentedAnimal, setAugmentedAnimal] = useState<Animal>();
   const [stakingPeriod, setStakingPeriod] = useState<Date>(new Date());
-  const [redeemable, setRedeemable] = useState<number>(0);
+  const [redeemable, setRedeemable] = useState<Rewards>({baseRewards: 0, pendingRewards: 0, totalMultipliers: 0, multipliers: []});
+
 
   const [multipliers, setMultipliers] = useState<{
     total: number;
@@ -91,19 +92,20 @@ Props) => {
   useEffect(() => {
     if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
     if (augmentedAnimal?.lastClaim && isStaked) {
-      const { pendingRewards: rewards, multipliers } = getPendingStakingRewards(
+      const reedemable = getPendingStakingRewards(
         augmentedAnimal,
         stakingPeriod
       );
-      setRedeemable(rewards);
+      setRedeemable(reedemable);
       setMultipliers(multipliers);
       // console.log(rewards);
       //@ts-ignore
-      redeemableReward(rewards);
+      redeemableReward(reedemable.pendingRewards);
 
       return () => {};
     }
   }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards, isStaked]);
+
   return (
     <div>
       <div className='warriorTabContentBox'>
