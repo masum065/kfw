@@ -1578,12 +1578,15 @@ export const StakingProvider = (props: Props) => {
     //@ts-ignore
     const claimList = JSON.parse(sessionStorage.getItem("claimItemList"));
     if (!stakedAnimals) return;
+    console.log('hi 2');
     if (!wallet || !wallet.publicKey || !jungle || !provider) return;
+    console.log('hi 3');
 
     const claimItems = stakedAnimals.filter((animal, index) =>
       claimList.includes(animal.metadata.name)
     );
 
+    console.log('claim items', claimItems);
     const feePayer = wallet.publicKey;
 
     const claimToast = toast.loading("Claiming All Earnings...");
