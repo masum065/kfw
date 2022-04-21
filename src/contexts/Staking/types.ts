@@ -50,8 +50,11 @@ export interface StakedMetaData {
 export interface Rewards {
   baseRewards: number,
   pendingRewards: number,
-  totalMultipliers: number,
-  multipliers: any
+}
+
+export interface Multipliers {
+  total: number,
+  list: any
 }
 
 export interface ContextValues {
