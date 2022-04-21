@@ -136,7 +136,7 @@ export const Collections = () => {
   }, [stakedAnimals]);
   // console.log(animalsStatus);
 
-  console.log('Staked NFTs', stakedAnimals);
+  // console.log('Staked NFTs', stakedAnimals);
 
   return (
     <div className='contentContainer'>

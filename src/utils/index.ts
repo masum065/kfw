@@ -137,7 +137,7 @@ export function createAssociatedTokenAccountInstruction(
 
 export const factionToNumber = (faction: string) => {
   switch (faction) {
-    case "fractures":
+    case "basc":
       return 1;
     case "main":
       return 2;

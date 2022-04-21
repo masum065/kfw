@@ -93,7 +93,10 @@
         {
           "name": "root",
           "type": {
-            "array": ["u8", 32]
+            "array": [
+              "u8",
+              32
+            ]
           }
         }
       ]
@@ -153,7 +156,10 @@
         {
           "name": "root",
           "type": {
-            "array": ["u8", 32]
+            "array": [
+              "u8",
+              32
+            ]
           }
         }
       ]
@@ -310,7 +316,10 @@
           "name": "proof",
           "type": {
             "vec": {
-              "array": ["u8", 32]
+              "array": [
+                "u8",
+                32
+              ]
             }
           }
         },
@@ -321,6 +330,12 @@
         {
           "name": "faction",
           "type": "u64"
+        },
+        {
+          "name": "metadata",
+          "type": {
+            "defined": "MetaData"
+          }
         }
       ]
     },
@@ -513,7 +528,10 @@
           {
             "name": "root",
             "type": {
-              "array": ["u8", 32]
+              "array": [
+                "u8",
+                32
+              ]
             }
           }
         ]
@@ -573,6 +591,14 @@
           {
             "name": "holdings",
             "type": "u64"
+          },
+          {
+            "name": "staked",
+            "type": {
+              "vec": {
+                "defined": "MetaData"
+              }
+            }
           }
         ]
       }
@@ -611,9 +637,57 @@
           {
             "name": "deposit",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MetaData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
           },
           {
-            "name": "stakerInfo",
+            "name": "background",
+            "type": "u8"
+          },
+          {
+            "name": "backAccessory",
+            "type": "u8"
+          },
+          {
+            "name": "skin",
+            "type": "u8"
+          },
+          {
+            "name": "clothing",
+            "type": "u8"
+          },
+          {
+            "name": "frontAccessory",
+            "type": "u8"
+          },
+          {
+            "name": "hair",
+            "type": "u8"
+          },
+          {
+            "name": "hairAccessory",
+            "type": "u8"
+          },
+          {
+            "name": "mouthAccessory",
+            "type": "u8"
+          },
+          {
+            "name": "eyes",
+            "type": "u8"
+          },
+          {
+            "name": "eyewear",
             "type": "u8"
           }
         ]
@@ -638,6 +712,6 @@
     }
   ],
   "metadata": {
-    "address": "JAiLsp5k6ANQAy9UcJC9TfTWieY5Afo42ykihpTeVk8L"
+    "address": "EW23ZGjUHLrVpHp1kFayNSZExThntA9QV4hxLc3ScDT5"
   }
 }

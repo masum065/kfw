@@ -91,19 +91,20 @@ Props) => {
   useEffect(() => {
     if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
     if (augmentedAnimal?.lastClaim && isStaked) {
-      const { rewards, multipliers } = getPendingStakingRewards(
+      const { pendingRewards: rewards, multipliers } = getPendingStakingRewards(
         augmentedAnimal,
         stakingPeriod
       );
       setRedeemable(rewards);
       setMultipliers(multipliers);
-      console.log(rewards);
+      // console.log(rewards);
       //@ts-ignore
       redeemableReward(rewards);
 
       return () => {};
     }
   }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards, isStaked]);
+  console.log(token)
   return (
     <div>
       <div className='warriorTabContentBox'>
@@ -112,9 +113,9 @@ Props) => {
         {/* <img src={token.uriData.image} alt='' /> */}
         {/* </SelectNFT> */}
         {/* ) : ( */}
-        <img src={token.uriData.image} alt='' />
+        <img src={token.metadata.image} alt='' />
         {/* )} */}
-        <span>{token.uriData.name}</span>
+        <span>{token.metadata.name}</span>
         {extraMultiplier && (
           <div>
             <h6>Extra Multiplier:</h6>

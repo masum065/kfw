@@ -29,7 +29,29 @@ export interface Animal {
 }
 
 export interface StakerInfo {
-  holdings: number;
+  holdings: number,
+  staked: StakedMetaData[],
+}
+
+export interface StakedMetaData {
+  mint: PublicKey,
+  background: number,
+  backAccessory: number,
+  skin: number,
+  clothing: number,
+  frontAccessory: number,
+  hair: number,
+  hairAccessory: number,
+  mouthAccessory: number,
+  eyes: number,
+  eyewear: number,
+}
+
+export interface Rewards {
+  baseRewards: number,
+  pendingRewards: number,
+  totalMultipliers: number,
+  multipliers: any
 }
 
 export interface ContextValues {
@@ -38,17 +60,7 @@ export interface ContextValues {
   stakedAnimals: Animal[];
   userAccount?: TokenAccount;
   getRarityMultiplier: (animal: Animal) => number | undefined;
-  getPendingStakingRewards: (
-    animal: Animal,
-    since: Date
-  ) => {
-    rewards: number;
-    multipliers: {
-      total: number;
-      holdingsMultiplier: number;
-      weeklyMultiplier: number;
-    };
-  };
+  getPendingStakingRewards: (animal: Animal, since: Date) => Rewards;
   fetchAnimal: (mint: PublicKey) => Promise<Animal | undefined>;
   refreshAnimals: () => Promise<void>;
   fetchUserAccount: () => Promise<void>;
@@ -57,10 +69,8 @@ export interface ContextValues {
   unstakeAnimal: (animal: Animal) => Promise<void>;
   claimStakingRewards: (animal: Animal) => Promise<void>;
   claimAllStakingRewards: () => Promise<void>;
-  stakedAnimalsStatus: any;
-  animalsStatus: any;
-  avaliableStakedAnimals: Animal[];
-  setAvaliableStakedAnimals: (
-    _avaliableStakedAnimals?: Animal[]
-  ) => Promise<void>;
+  stakedAnimalsStatus: any,
+  animalsStatus: any,
+  avaliableStakedAnimals: (Animal)[];
+  setAvaliableStakedAnimals: (_avaliableStakedAnimals?: Animal[]) => Promise<void>;
 }
