@@ -1578,17 +1578,13 @@ export const StakingProvider = (props: Props) => {
     //@ts-ignore
     const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
 
-    console.log('hi');
     if (!stakedAnimals) return;
-    console.log('hi 2');
     if (!wallet || !wallet.publicKey || !jungle || !provider) return;
-    console.log('hi 3');
 
     const claimItems = stakedAnimals.filter((animal, index) =>
       claimList.includes(animal.metadata.name)
     );
 
-    console.log('claim items', claimItems);
     const feePayer = wallet.publicKey;
 
     const claimToast = toast.loading('Claiming All Earnings...');
@@ -1640,39 +1636,6 @@ export const StakingProvider = (props: Props) => {
         )
       );
 
-    // await Promise.all(
-    //   avaliableStakedAnimals
-    //     // .filter((animal) => {
-    //     //   const endDate = dayjs(animal?.lastClaim).add(3, "days");
-    //     //   if (animal && dayjs(endDate).diff(dayjs()) <= 0) {
-    //     //     return true;
-    //     //   } else return false;
-    //     // })
-    //     .map(async (animal) => {
-    //       const [animalAddress] = await PublicKey.findProgramAddress(
-    //         [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
-    //         program.programId
-    //       );
-    //       transaction.add(
-    //         program.instruction.claimStaking({
-    //           accounts: {
-    //             jungle: jungleAddress,
-    //             escrow: jungle.escrow,
-    //             animal: animalAddress,
-    //             stakerInfo: stakerAddress,
-    //             staker: feePayer,
-    //             mint: jungle.mint,
-    //             stakerAccount: stakerAccount,
-    //             rewardsAccount: rewardsAccount,
-    //             tokenProgram: TOKEN_PROGRAM_ID,
-    //             clock: SYSVAR_CLOCK_PUBKEY,
-    //             rent: SYSVAR_RENT_PUBKEY,
-    //             systemProgram: SystemProgram.programId,
-    //           },
-    //         })
-    //       );
-    //     })
-    // );
     await Promise.all(
       claimItems.map(async (animal) => {
         const [animalAddress] = await PublicKey.findProgramAddress(
@@ -1747,16 +1710,16 @@ export const StakingProvider = (props: Props) => {
   ]);
 
   const refreshAnimals = useCallback(async () => {
-    // setAnimals([]);
-    // setStakedAnimals([]);
+    setAnimals([]);
+    setStakedAnimals([]);
     await fetchJungle();
     await fetchAnimals();
     await fetchStakedAnimals();
   }, [fetchJungle, fetchStakedAnimals, fetchAnimals]);
 
-  // useEffect(() => {
-  //   refreshAnimals();
-  // },[anchorWallet, refreshAnimals]);
+  useEffect(() => {
+    refreshAnimals();
+  }, [anchorWallet, refreshAnimals]);
 
   return (
     <StackContext.Provider
@@ -1766,6 +1729,7 @@ export const StakingProvider = (props: Props) => {
         stakedAnimals: stakedAnimals || [],
         userAccount,
         getRarityMultiplier,
+        getMultipliers,
         getPendingStakingRewards,
         fetchAnimal,
         refreshAnimals,

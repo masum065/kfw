@@ -6,7 +6,8 @@ export const StackContext = createContext<ContextValues>({
   animals: [],
   stakedAnimals: [],
   getRarityMultiplier: () => 0,
-  getPendingStakingRewards: () => ({baseRewards: 0, pendingRewards: 0}),
+  getMultipliers: () => {},
+  getPendingStakingRewards: () => ({ baseRewards: 0, pendingRewards: 0 }),
   fetchAnimal: (mint: PublicKey) => new Promise(() => {}),
   refreshAnimals: () => new Promise(() => {}),
   fetchUserAccount: () => new Promise(() => {}),
@@ -18,5 +19,6 @@ export const StackContext = createContext<ContextValues>({
   stakedAnimalsStatus: {},
   animalsStatus: {},
   avaliableStakedAnimals: [],
-  setAvaliableStakedAnimals: (_avaliableStakedAnimals?: Animal[])  => new Promise(() => {}),
+  setAvaliableStakedAnimals: (_avaliableStakedAnimals?: Animal[]) =>
+    new Promise(() => {}),
 });

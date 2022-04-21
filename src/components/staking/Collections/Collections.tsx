@@ -10,7 +10,7 @@ export const Collections = () => {
   const wallet = useWallet();
   const [selected, setSelected] = useState('');
   const [ready, setReady] = useState(false);
-  const [meditation, setMeditation] = useState('');
+  const [multipliers, setMultipliers] = useState<any>({});
   const [redeemableRewards, setRedeemableRewards] = useState<number[]>([]);
   const [augment, setAugment] = useState<Animal | null>(null);
   const [checkBoxValues, setCheckboxValues] = useState<string[]>([]);
@@ -25,35 +25,8 @@ export const Collections = () => {
     unstakeAnimal,
     claimStakingRewards,
     claimAllStakingRewards,
+    getMultipliers,
   } = useStack();
-
-  const handleClickAway = () => {
-    setSelected('');
-    setCheckboxValues([]);
-    setAugment(null);
-  };
-
-  const handleStake = useCallback(async () => {
-    if (!augment) return;
-    await stakeAnimal(augment);
-    setSelected('');
-    setAugment(null);
-  }, [augment, stakeAnimal]);
-
-  const handleUnStake = useCallback(async () => {
-    if (!augment) return;
-    await unstakeAnimal(augment);
-    setSelected('');
-    setAugment(null);
-  }, [augment, unstakeAnimal]);
-
-  const handleClaim = useCallback(async () => {
-    console.log('claim', augment);
-    if (!augment) return;
-    await claimStakingRewards(augment);
-    setSelected('');
-    setAugment(null);
-  }, [augment, unstakeAnimal]);
 
   const handleClaimAll = useCallback(async () => {
     onSetClaimListOnStorage();
@@ -134,12 +107,26 @@ export const Collections = () => {
   useEffect(() => {
     onSetClaimListOnStorage();
   }, [stakedAnimals]);
-  // console.log(animalsStatus);
 
-  // console.log('Staked NFTs', stakedAnimals);
+  // const multipliers = useMemo(() => getMultipliers(), []);
+
+  useEffect(() => {
+    setMultipliers(getMultipliers().list);
+  }, []);
+
+  useEffect(() => {
+    if (!multipliers) {
+      getMultipliers();
+    }
+  });
+
+  const val: [string, unknown][] = [];
+  var result = Object.entries(multipliers).map((value, key) => {
+    val.push(value);
+  });
 
   return (
-    <div className='contentContainer'>
+    <div className='contentContainer position-relative'>
       <div className='aboutContainerWrap'>
         <div className='container'>
           <div className='warriorTrainingTabs'>
@@ -230,6 +217,37 @@ export const Collections = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='multipliers-card'>
+        <ul>
+          {val.map((v) => (
+            <li>
+              <b>{v[0]}:</b>
+              <ul className='inner-list'>
+                {typeof v[1] === 'number' ? (
+                  <li>
+                    <span>{v[0]}:</span>
+                    <span>{v[1]}</span>
+                  </li>
+                ) : (
+                  //@ts-ignore
+                  Object.entries(v[1]).map((p: any) => {
+                    if (p[1] !== 0) {
+                      return (
+                        <li>
+                          <span>{p[0]}:</span> <span>{p[1]}</span>
+                        </li>
+                      );
+                    } else {
+                      return;
+                    }
+                  })
+                )}
+              </ul>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

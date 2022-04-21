@@ -343,10 +343,12 @@
       .generalGreenBtn {
         width: auto;
         margin: 15px auto 0;
-        max-width: unset;
+        // max-width: unset;
         text-transform: capitalize;
         font-size: 20px;
         padding: 5px 13px;
+        display: block;
+        width: 100%;
       }
     }
   }
@@ -423,4 +425,35 @@
       width: 100%;
     }
   }
+}
+
+.position-relative {
+  position: relative;
+}
+
+.multipliers-card {
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  min-width: 225px;
+  border-radius: 5px;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  box-shadow: -3px 6px 5px #98ed944d;
+}
+
+.multipliers-card ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.multipliers-card .inner-list {
+  padding-left: 10px;
+}
+
+.multipliers-card .inner-list li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  padding: 5px;
 }

@@ -127,7 +127,9 @@ Props) => {
         )}
 
         {augmentedAnimal?.lastClaim && isStaked ? (
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div
+            style={{ display: 'grid', gap: 5, gridTemplateColumns: '1fr 1fr' }}
+          >
             <button className='generalGreenBtn small' onClick={handleUnstake}>
               Unstake
             </button>
