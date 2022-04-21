@@ -31,7 +31,13 @@ import {
 import { buildLeaves, factionToNumber } from '../../utils';
 import { MerkleTree } from '../../utils/merkleTree';
 import { StackContext } from './Context';
-import { Animal, Jungle, StakedMetaData, StakerInfo } from './types';
+import {
+  Animal,
+  Jungle,
+  Multipliers,
+  StakedMetaData,
+  StakerInfo,
+} from './types';
 
 const kfwComboEncoding: any = require('../../constants/kfwComboEncoding.json');
 
@@ -402,6 +408,574 @@ export const StakingProvider = (props: Props) => {
     [jungle]
   );
 
+  const getMultipliers = useCallback((): Multipliers => {
+    if (!stakerInfo || !jungle)
+      return {
+        total: 1,
+        list: {},
+      };
+
+    // Total Multipliers
+    let totalMultipliers = 1.0;
+    let allMultipliers: any = {};
+
+    // Fetch amount of animals staked from StakerInfo
+    const holdings = stakerInfo.holdings;
+    let holdingsMultiplier =
+      holdings * jungle.holdingsMultiplier.toNumber() -
+      jungle.holdingsMultiplier.toNumber();
+
+    if (holdings > 20) {
+      holdingsMultiplier += 2.0;
+    } else if (holdings >= 16) {
+      holdingsMultiplier += 1.5;
+    } else if (holdings >= 11) {
+      holdingsMultiplier += 0.9;
+    } else if (holdings >= 6) {
+      holdingsMultiplier += 0.5;
+    } else if (holdings >= 1) {
+      holdingsMultiplier += 0.2;
+    }
+    totalMultipliers += holdingsMultiplier;
+    allMultipliers['holdingsMultiplier'] = holdingsMultiplier;
+
+    // Calculating Combo Multipliers
+
+    // Legendary Backgrounds Combo
+    let legendary_bg_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    // Hong Kong Combo
+    let hk_combo_values = [11, 12, 13];
+    let hk_combo: number[] = [];
+
+    // Full Elemental Combo
+    let full_element_combo_values = [14, 15, 16, 17, 18, 19];
+    let full_element_combo: number[] = [];
+
+    // Basic Elemental Combo
+    let basic_element_combo_values = [14, 20, 21, 22, 23, 24];
+    let basic_element_combo: number[] = [];
+
+    // Back Accessory Combo
+    let back_accessory_combo_values = [0, 1, 2, 3];
+    let back_accessory_combo: number[] = [];
+
+    // Skin Combo: Water Spirit Combo
+    let skin_combo_1_values = [0];
+    let skin_combo_1: number[] = [];
+
+    // Skin Combo: Alien Combo
+    let skin_combo_2_values = [1];
+    let skin_combo_2: number[] = [];
+
+    // Clothing Combo: Armor Combo
+    let clothing_combo_1_values = [0, 1, 2, 3, 4, 5];
+    let clothing_combo_1: number[] = [];
+
+    // Clothing Combo: Ninja Combo
+    let clothing_combo_2_values = [6, 7, 8, 9];
+    let clothing_combo_2: number[] = [];
+
+    // Clothing Combo: Superhero Combo
+    let clothing_combo_3_values = [10, 11, 12];
+    let clothing_combo_3: number[] = [];
+
+    // Clothing Combo: KF Hero Combo
+    let clothing_combo_4_values = [13, 14, 15];
+    let clothing_combo_4: number[] = [];
+
+    // Clothing Combo: Street Karate Combo
+    let clothing_combo_5_values = [16, 17, 18, 19, 20, 21, 22, 23, 24];
+    let clothing_combo_5: number[] = [];
+
+    // Clothing Combo: Anime Combo
+    let clothing_combo_6_values = [
+      25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    ];
+    let clothing_combo_6: number[] = [];
+
+    // Front Accessory Combo
+    let front_accessory_combo_values = [0, 1, 2, 3];
+    let front_accessory_combo: number[] = [];
+
+    // Hair Combo: Legendary Hair Combo
+    let hair_combo_1_values = [0, 1, 2, 3, 4];
+    let hair_combo_1 = [0, 0, 0, 0, 0];
+
+    // Hair Combo: Super Fire Combo
+    let hair_combo_2_values = [5, 6, 7, 8];
+    let hair_combo_2: number[] = [];
+
+    // Hair Combo: Lu Fu Combo
+    let hair_combo_3_values = [9, 10, 11, 12, 13];
+    let hair_combo_3: number[] = [];
+
+    // Hair Combo: Mask Combo
+    let hair_combo_4_values = [14, 15, 16, 17, 18, 19, 20];
+    let hair_combo_4: number[] = [];
+
+    // Hair Accessory Combo
+    let hair_accessory_combo_values = [0, 1, 2, 3, 4, 5, 6, 7];
+    let hair_accessory_combo = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    // Mouth Accessory Combo
+    let mouth_accessory_combo_values = [0, 1];
+    let mouth_accessory_combo = [0, 0];
+
+    // Eye Combo: Laser Combo
+    let eye_combo_1_values = [0];
+    let eye_combo_1: number[] = [];
+
+    // Eye Combo: Large Eye Combo
+    let eye_combo_2_values = [1, 2, 3];
+    let eye_combo_2: number[] = [];
+
+    // Eyewear Combo: Cyclops Combo
+    let eyewear_combo_1_values = [0, 1, 2, 3, 4];
+    let eyewear_combo_1: number[] = [];
+
+    // Eyewear Combo: Solana Combo
+    let eyewear_combo_2_values = [5, 6, 7, 8];
+    let eyewear_combo_2: number[] = [];
+
+    // Eyewear Combo: VR Combo
+    let eyewear_combo_3_values = [9, 10, 11];
+    let eyewear_combo_3: number[] = [];
+
+    stakerInfo.staked.forEach((animal: StakedMetaData) => {
+      // Animal Attributes
+      let background = animal.background;
+      let back_accessory = animal.backAccessory;
+      let skin = animal.skin;
+      let clothing = animal.clothing;
+      let front_accessory = animal.frontAccessory;
+      let hair = animal.hair;
+      let hair_accessory = animal.hairAccessory;
+      let mouth_accessory = animal.mouthAccessory;
+      let eyes = animal.eyes;
+      let eyewear = animal.eyewear;
+
+      // BACKGROUND
+      allMultipliers['background'] = {};
+
+      // Adding to Multiplier if any animal has legendary background
+      let index = legendary_bg_values.indexOf(background);
+      allMultipliers['background']['legendaryCombo'] = 0;
+      if (index > -1) {
+        totalMultipliers += 0.4;
+        allMultipliers['background']['legendaryCombo'] += 0.4;
+      }
+
+      // Checking for Hong Kong Background Combo
+      check_combo_distinct(background, hk_combo_values, hk_combo);
+
+      // Checking for Full Element Background Combo
+      check_combo_distinct(
+        background,
+        full_element_combo_values,
+        full_element_combo
+      );
+
+      // Checking for Basic Element Background Combo
+      check_combo_distinct(
+        background,
+        basic_element_combo_values,
+        basic_element_combo
+      );
+
+      // Checking for Back Accessory Combo
+      check_combo(
+        back_accessory,
+        back_accessory_combo_values,
+        back_accessory_combo
+      );
+
+      // Checking for Skin Combo 1
+      check_combo(skin, skin_combo_1_values, skin_combo_1);
+
+      // Checking for Skin Combo 2
+      check_combo(skin, skin_combo_2_values, skin_combo_2);
+
+      // Checking for Clothing Combo 1
+      check_combo(clothing, clothing_combo_1_values, clothing_combo_1);
+
+      // Checking for Clothing Combo 2
+      check_combo(clothing, clothing_combo_2_values, clothing_combo_2);
+
+      // Checking for Clothing Combo 3
+      check_combo(clothing, clothing_combo_3_values, clothing_combo_3);
+
+      // Checking for Clothing Combo 4
+      check_combo(clothing, clothing_combo_4_values, clothing_combo_4);
+
+      // // Checking for Clothing Combo 5
+      check_combo(clothing, clothing_combo_5_values, clothing_combo_5);
+
+      // Checking for Clothing Combo 6
+      check_combo(clothing, clothing_combo_6_values, clothing_combo_6);
+
+      // Checking for Front Accessory Combo
+      check_combo(
+        front_accessory,
+        front_accessory_combo_values,
+        front_accessory_combo
+      );
+
+      // Checking for Hair Combo 1
+      if (hair == hair_combo_1_values[0]) {
+        hair_combo_1[0] += 1;
+      } else if (hair == hair_combo_1_values[1]) {
+        hair_combo_1[1] += 1;
+      } else if (hair == hair_combo_1_values[2]) {
+        hair_combo_1[2] += 1;
+      } else if (hair == hair_combo_1_values[3]) {
+        hair_combo_1[3] += 1;
+      } else if (hair == hair_combo_1_values[4]) {
+        hair_combo_1[4] += 1;
+      }
+
+      // Checking for Hair Combo 2
+      check_combo(hair, hair_combo_2_values, hair_combo_2);
+
+      // Checking for Hair Combo 3
+      check_combo(hair, hair_combo_3_values, hair_combo_3);
+
+      // Checking for Hair Combo 4
+      check_combo(hair, hair_combo_4_values, hair_combo_4);
+
+      // Checking for Hair Accessory Combo
+      if (hair_accessory == hair_accessory_combo_values[0]) {
+        hair_accessory_combo[0] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[1]) {
+        hair_accessory_combo[1] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[2]) {
+        hair_accessory_combo[2] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[3]) {
+        hair_accessory_combo[3] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[4]) {
+        hair_accessory_combo[4] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[5]) {
+        hair_accessory_combo[5] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[6]) {
+        hair_accessory_combo[6] += 1;
+      } else if (hair_accessory == hair_accessory_combo_values[7]) {
+        hair_accessory_combo[7] += 1;
+      }
+
+      // Checking for Mouth Accessory Combo
+      if (mouth_accessory == mouth_accessory_combo_values[0]) {
+        mouth_accessory_combo[0] += 1;
+      } else if (mouth_accessory == mouth_accessory_combo_values[1]) {
+        mouth_accessory_combo[1] += 1;
+      }
+
+      // Checking for Eye Combo 1
+      check_combo(eyes, eye_combo_1_values, eye_combo_1);
+
+      // Checking for Eye Combo 2
+      check_combo(eyes, eye_combo_2_values, eye_combo_2);
+
+      // Checking for Eyewear Combo 1
+      check_combo(eyewear, eyewear_combo_1_values, eyewear_combo_1);
+
+      // Checking for Eyewear Combo 2
+      check_combo(eyewear, eyewear_combo_2_values, eyewear_combo_2);
+
+      // Checking for Eyewear Combo 3
+      check_combo(eyewear, eyewear_combo_3_values, eyewear_combo_3);
+    });
+
+    // Adding Hong Kong Combo Multiplier
+    allMultipliers['background']['hongKongCombo'] = 0;
+    if (hk_combo.length == hk_combo_values.length) {
+      totalMultipliers += 0.3;
+      allMultipliers['background']['hongKongCombo'] += 0.3;
+    }
+
+    // Adding Full Element Combo Multiplier
+    allMultipliers['background']['fullElementalCombo'] = 0;
+    if (full_element_combo.length >= full_element_combo_values.length - 1) {
+      totalMultipliers += 0.3;
+      allMultipliers['background']['fullElementalCombo'] += 0.3;
+    }
+
+    // Adding Basic Element Combo Multiplier
+    allMultipliers['background']['basicElementalCombo'] = 0;
+    if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
+      totalMultipliers += 0.3;
+      allMultipliers['background']['basicElementalCombo'] += 0.3;
+    }
+
+    // BACK_ACCESSORY
+    allMultipliers['backAccessory'] = {};
+    // Adding Back Accessory Combo Multiplier
+    let capeMasterCombo = check_multiplier(
+      back_accessory_combo.length,
+      3,
+      0.1,
+      5,
+      0.2
+    );
+    totalMultipliers += capeMasterCombo;
+    allMultipliers['backAccessory']['capeMasterCombo'] = capeMasterCombo;
+
+    // SKIN
+    allMultipliers['skin'] = {};
+    // Adding Skin Combo 1 Multiplier
+    let waterSpiritCombo = check_multiplier(
+      skin_combo_1.length,
+      3,
+      0.1,
+      5,
+      0.2
+    );
+    totalMultipliers += waterSpiritCombo;
+    allMultipliers['skin']['fullElementalCombo'] = waterSpiritCombo;
+
+    // Adding Skin Combo 2 Multiplier
+    let alienCombo = check_multiplier(skin_combo_2.length, 3, 0.1, 5, 0.2);
+    totalMultipliers += alienCombo;
+    allMultipliers['skin']['alienCombo'] = alienCombo;
+
+    // CLOTHING
+    allMultipliers['clothing'] = {};
+    // Adding Clothing Combo 1 Multiplier
+    let armorCombo = check_multiplier(
+      clothing_combo_1.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += armorCombo;
+    allMultipliers['clothing']['armorCombo'] = armorCombo;
+
+    // Adding Clothing Combo 2 Multiplier
+    let ninjaCombo = check_multiplier(
+      clothing_combo_2.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += ninjaCombo;
+    allMultipliers['clothing']['ninjaCombo'] = ninjaCombo;
+
+    // Adding Clothing Combo 3 Multiplier
+    let superHeroCombo = check_multiplier(
+      clothing_combo_3.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += superHeroCombo;
+    allMultipliers['clothing']['superHeroCombo'] = superHeroCombo;
+
+    // Adding Clothing Combo 4 Multiplier
+    let kfHeroCombo = check_multiplier(
+      clothing_combo_4.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += kfHeroCombo;
+    allMultipliers['clothing']['kfHeroCombo'] = kfHeroCombo;
+
+    // Adding Clothing Combo 5 Multiplier
+    let streetKarateCombo = check_multiplier(
+      clothing_combo_5.length,
+      3,
+      0.15,
+      5,
+      0.25
+    );
+    totalMultipliers += streetKarateCombo;
+    allMultipliers['clothing']['streetKarateCombo'] = streetKarateCombo;
+
+    // Adding Clothing Combo 6 Multiplier
+    let animeCombo = check_multiplier(clothing_combo_6.length, 3, 0.1, 5, 0.2);
+    totalMultipliers += animeCombo;
+    allMultipliers['clothing']['animeCombo'] = animeCombo;
+
+    // FRONT_ACCESSORY
+    allMultipliers['frontAccessory'] = {};
+    // Adding Front Accessory Combo Multiplier
+    let fighterCombo = check_multiplier(
+      front_accessory_combo.length,
+      3,
+      0.1,
+      5,
+      0.2
+    );
+    totalMultipliers += fighterCombo;
+    allMultipliers['frontAccessory']['fighterCombo'] = fighterCombo;
+
+    // HAIR
+    allMultipliers['hair'] = {};
+    // Adding Hair Combo 1 Multiplier
+    let legendaryHairCombo = 0;
+    legendaryHairCombo += check_multiplier(hair_combo_1[0], 2, 0.25, 4, 0.35);
+    legendaryHairCombo += check_multiplier(hair_combo_1[1], 2, 0.25, 4, 0.35);
+    legendaryHairCombo += check_multiplier(hair_combo_1[2], 2, 0.25, 4, 0.35);
+    legendaryHairCombo += check_multiplier(hair_combo_1[3], 2, 0.25, 4, 0.35);
+    legendaryHairCombo += check_multiplier(hair_combo_1[4], 2, 0.25, 4, 0.35);
+    totalMultipliers += legendaryHairCombo;
+    allMultipliers['hair']['legendary'] = legendaryHairCombo;
+
+    // Adding Hair Combo 2 Multiplier
+    let superFireCombo = check_multiplier(
+      hair_combo_2.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += superFireCombo;
+    allMultipliers['hair']['superFireCombo'] = superFireCombo;
+
+    // Adding Hair Combo 3 Multiplier
+    let luFuCombo = check_multiplier(hair_combo_3.length, 3, 0.25, 5, 0.35);
+    totalMultipliers += luFuCombo;
+    allMultipliers['hair']['luFuCombo'] = luFuCombo;
+
+    // Adding Hair Combo 4 Multiplier
+    let maskCombo = check_multiplier(hair_combo_4.length, 3, 0.15, 5, 0.25);
+    totalMultipliers += maskCombo;
+    allMultipliers['hair']['maskCombo'] = maskCombo;
+
+    // HAIR_ACCESSORY
+    allMultipliers['hairAccessory'] = {};
+    // Adding Hair Accessory Combo Multiplier
+    let legendaryHairAccessory = 0;
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[0],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[1],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[2],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[3],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[4],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[5],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[6],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    legendaryHairAccessory += check_multiplier(
+      hair_accessory_combo[7],
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += legendaryHairAccessory;
+    allMultipliers['hairAccessory']['legendary'] = legendaryHairAccessory;
+
+    // MOUTH_ACCESSORY
+    allMultipliers['mouthAccessory'] = {};
+    // Adding Mouth Accessory Combo Multiplier
+    let legendaryMouthAccessory = 0;
+    legendaryMouthAccessory += check_multiplier(
+      mouth_accessory_combo[0],
+      2,
+      0.25,
+      4,
+      0.35
+    );
+    legendaryMouthAccessory += check_multiplier(
+      mouth_accessory_combo[1],
+      2,
+      0.25,
+      4,
+      0.35
+    );
+    totalMultipliers += legendaryMouthAccessory;
+    allMultipliers['mouthAccessory']['legendary'] = legendaryMouthAccessory;
+
+    // EYES
+    allMultipliers['eyes'] = {};
+    // Adding Eye Combo 1 Multiplier
+    let laserCombo = check_multiplier(eye_combo_1.length, 3, 0.25, 5, 0.35);
+    totalMultipliers += laserCombo;
+    allMultipliers['eyes']['laserCombo'] = laserCombo;
+
+    // Adding Eye Combo 2 Multiplier
+    let largeEyeCombo = check_multiplier(eye_combo_2.length, 3, 0.25, 5, 0.35);
+    totalMultipliers += largeEyeCombo;
+    allMultipliers['eyes']['largeEyeCombo'] = largeEyeCombo;
+
+    // EYEWEAR
+    allMultipliers['eyewear'] = {};
+    // Adding Eyewear Combo 1 Multiplier
+    let CyclopsCombo = check_multiplier(
+      eyewear_combo_1.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += CyclopsCombo;
+    allMultipliers['eyewear']['CyclopsCombo'] = CyclopsCombo;
+
+    // Adding Eyewear Combo 2 Multiplier
+    let solanaCombo = check_multiplier(
+      eyewear_combo_2.length,
+      3,
+      0.25,
+      5,
+      0.35
+    );
+    totalMultipliers += solanaCombo;
+    allMultipliers['eyewear']['solanaCombo'] = solanaCombo;
+
+    // Adding Eyewear Combo 3 Multiplier
+    let VRCombo = check_multiplier(eyewear_combo_3.length, 3, 0.25, 5, 0.35);
+    totalMultipliers += VRCombo;
+    allMultipliers['eyewear']['VRCombo'] = VRCombo;
+
+    return {
+      total: totalMultipliers,
+      list: allMultipliers,
+    };
+  }, [stakerInfo, jungle]);
+
   const getPendingStakingRewards = useCallback(
     (animal: Animal, end: Date) => {
       if (
@@ -415,585 +989,7 @@ export const StakingProvider = (props: Props) => {
         return {
           baseRewards: 0,
           pendingRewards: 0,
-          totalMultipliers: 0,
-          multipliers: [],
         };
-
-      // Total Multipliers
-      let totalMultipliers = 1.0;
-      let allMultipliers: any = {};
-
-      // Calculate the total amount of tokens staked
-      const weekDifference = Math.round(
-        (end.valueOf() - animal.stakedAt.valueOf()) / 1000 / 60 / 60 / 24 / 7
-      );
-      const weeklyMultiplier =
-        weekDifference * jungle.weeklyMultiplier.toNumber();
-      totalMultipliers += weeklyMultiplier;
-      allMultipliers['weeklyMultiplier'] = weeklyMultiplier;
-
-      // Fetch amount of animals staked from StakerInfo
-      const holdings = stakerInfo.holdings;
-      let holdingsMultiplier =
-        holdings * jungle.holdingsMultiplier.toNumber() -
-        jungle.holdingsMultiplier.toNumber();
-
-      if (holdings > 20) {
-        holdingsMultiplier += 2.0;
-      } else if (holdings >= 16) {
-        holdingsMultiplier += 1.5;
-      } else if (holdings >= 11) {
-        holdingsMultiplier += 0.9;
-      } else if (holdings >= 6) {
-        holdingsMultiplier += 0.5;
-      } else if (holdings >= 1) {
-        holdingsMultiplier += 0.2;
-      }
-      totalMultipliers += holdingsMultiplier;
-      allMultipliers['holdingsMultiplier'] = holdingsMultiplier;
-
-      // Calculating Combo Multipliers
-
-      // Legendary Backgrounds Combo
-      let legendary_bg_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-      // Hong Kong Combo
-      let hk_combo_values = [11, 12, 13];
-      let hk_combo: number[] = [];
-
-      // Full Elemental Combo
-      let full_element_combo_values = [14, 15, 16, 17, 18, 19];
-      let full_element_combo: number[] = [];
-
-      // Basic Elemental Combo
-      let basic_element_combo_values = [14, 20, 21, 22, 23, 24];
-      let basic_element_combo: number[] = [];
-
-      // Back Accessory Combo
-      let back_accessory_combo_values = [0, 1, 2, 3];
-      let back_accessory_combo: number[] = [];
-
-      // Skin Combo: Water Spirit Combo
-      let skin_combo_1_values = [0];
-      let skin_combo_1: number[] = [];
-
-      // Skin Combo: Alien Combo
-      let skin_combo_2_values = [1];
-      let skin_combo_2: number[] = [];
-
-      // Clothing Combo: Armor Combo
-      let clothing_combo_1_values = [0, 1, 2, 3, 4, 5];
-      let clothing_combo_1: number[] = [];
-
-      // Clothing Combo: Ninja Combo
-      let clothing_combo_2_values = [6, 7, 8, 9];
-      let clothing_combo_2: number[] = [];
-
-      // Clothing Combo: Superhero Combo
-      let clothing_combo_3_values = [10, 11, 12];
-      let clothing_combo_3: number[] = [];
-
-      // Clothing Combo: KF Hero Combo
-      let clothing_combo_4_values = [13, 14, 15];
-      let clothing_combo_4: number[] = [];
-
-      // Clothing Combo: Street Karate Combo
-      let clothing_combo_5_values = [16, 17, 18, 19, 20, 21, 22, 23, 24];
-      let clothing_combo_5: number[] = [];
-
-      // Clothing Combo: Anime Combo
-      let clothing_combo_6_values = [
-        25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-      ];
-      let clothing_combo_6: number[] = [];
-
-      // Front Accessory Combo
-      let front_accessory_combo_values = [0, 1, 2, 3];
-      let front_accessory_combo: number[] = [];
-
-      // Hair Combo: Legendary Hair Combo
-      let hair_combo_1_values = [0, 1, 2, 3, 4];
-      let hair_combo_1 = [0, 0, 0, 0, 0];
-
-      // Hair Combo: Super Fire Combo
-      let hair_combo_2_values = [5, 6, 7, 8];
-      let hair_combo_2: number[] = [];
-
-      // Hair Combo: Lu Fu Combo
-      let hair_combo_3_values = [9, 10, 11, 12, 13];
-      let hair_combo_3: number[] = [];
-
-      // Hair Combo: Mask Combo
-      let hair_combo_4_values = [14, 15, 16, 17, 18, 19, 20];
-      let hair_combo_4: number[] = [];
-
-      // Hair Accessory Combo
-      let hair_accessory_combo_values = [0, 1, 2, 3, 4, 5, 6, 7];
-      let hair_accessory_combo = [0, 0, 0, 0, 0, 0, 0, 0];
-
-      // Mouth Accessory Combo
-      let mouth_accessory_combo_values = [0, 1];
-      let mouth_accessory_combo = [0, 0];
-
-      // Eye Combo: Laser Combo
-      let eye_combo_1_values = [0];
-      let eye_combo_1: number[] = [];
-
-      // Eye Combo: Large Eye Combo
-      let eye_combo_2_values = [1, 2, 3];
-      let eye_combo_2: number[] = [];
-
-      // Eyewear Combo: Cyclops Combo
-      let eyewear_combo_1_values = [0, 1, 2, 3, 4];
-      let eyewear_combo_1: number[] = [];
-
-      // Eyewear Combo: Solana Combo
-      let eyewear_combo_2_values = [5, 6, 7, 8];
-      let eyewear_combo_2: number[] = [];
-
-      // Eyewear Combo: VR Combo
-      let eyewear_combo_3_values = [9, 10, 11];
-      let eyewear_combo_3: number[] = [];
-
-      stakerInfo.staked.forEach((animal: StakedMetaData) => {
-        // Animal Attributes
-        let background = animal.background;
-        let back_accessory = animal.backAccessory;
-        let skin = animal.skin;
-        let clothing = animal.clothing;
-        let front_accessory = animal.frontAccessory;
-        let hair = animal.hair;
-        let hair_accessory = animal.hairAccessory;
-        let mouth_accessory = animal.mouthAccessory;
-        let eyes = animal.eyes;
-        let eyewear = animal.eyewear;
-
-        // BACKGROUND
-        allMultipliers['background'] = {};
-
-        // Adding to Multiplier if any animal has legendary background
-        let index = legendary_bg_values.indexOf(background);
-        allMultipliers['background']['legendaryCombo'] = 0;
-        if (index > -1) {
-          totalMultipliers += 0.4;
-          allMultipliers['background']['legendaryCombo'] += 0.4;
-        }
-
-        // Checking for Hong Kong Background Combo
-        check_combo_distinct(background, hk_combo_values, hk_combo);
-
-        // Checking for Full Element Background Combo
-        check_combo_distinct(
-          background,
-          full_element_combo_values,
-          full_element_combo
-        );
-
-        // Checking for Basic Element Background Combo
-        check_combo_distinct(
-          background,
-          basic_element_combo_values,
-          basic_element_combo
-        );
-
-        // Checking for Back Accessory Combo
-        check_combo(
-          back_accessory,
-          back_accessory_combo_values,
-          back_accessory_combo
-        );
-
-        // Checking for Skin Combo 1
-        check_combo(skin, skin_combo_1_values, skin_combo_1);
-
-        // Checking for Skin Combo 2
-        check_combo(skin, skin_combo_2_values, skin_combo_2);
-
-        // Checking for Clothing Combo 1
-        check_combo(clothing, clothing_combo_1_values, clothing_combo_1);
-
-        // Checking for Clothing Combo 2
-        check_combo(clothing, clothing_combo_2_values, clothing_combo_2);
-
-        // Checking for Clothing Combo 3
-        check_combo(clothing, clothing_combo_3_values, clothing_combo_3);
-
-        // Checking for Clothing Combo 4
-        check_combo(clothing, clothing_combo_4_values, clothing_combo_4);
-
-        // // Checking for Clothing Combo 5
-        check_combo(clothing, clothing_combo_5_values, clothing_combo_5);
-
-        // Checking for Clothing Combo 6
-        check_combo(clothing, clothing_combo_6_values, clothing_combo_6);
-
-        // Checking for Front Accessory Combo
-        check_combo(
-          front_accessory,
-          front_accessory_combo_values,
-          front_accessory_combo
-        );
-
-        // Checking for Hair Combo 1
-        if (hair == hair_combo_1_values[0]) {
-          hair_combo_1[0] += 1;
-        } else if (hair == hair_combo_1_values[1]) {
-          hair_combo_1[1] += 1;
-        } else if (hair == hair_combo_1_values[2]) {
-          hair_combo_1[2] += 1;
-        } else if (hair == hair_combo_1_values[3]) {
-          hair_combo_1[3] += 1;
-        } else if (hair == hair_combo_1_values[4]) {
-          hair_combo_1[4] += 1;
-        }
-
-        // Checking for Hair Combo 2
-        check_combo(hair, hair_combo_2_values, hair_combo_2);
-
-        // Checking for Hair Combo 3
-        check_combo(hair, hair_combo_3_values, hair_combo_3);
-
-        // Checking for Hair Combo 4
-        check_combo(hair, hair_combo_4_values, hair_combo_4);
-
-        // Checking for Hair Accessory Combo
-        if (hair_accessory == hair_accessory_combo_values[0]) {
-          hair_accessory_combo[0] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[1]) {
-          hair_accessory_combo[1] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[2]) {
-          hair_accessory_combo[2] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[3]) {
-          hair_accessory_combo[3] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[4]) {
-          hair_accessory_combo[4] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[5]) {
-          hair_accessory_combo[5] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[6]) {
-          hair_accessory_combo[6] += 1;
-        } else if (hair_accessory == hair_accessory_combo_values[7]) {
-          hair_accessory_combo[7] += 1;
-        }
-
-        // Checking for Mouth Accessory Combo
-        if (mouth_accessory == mouth_accessory_combo_values[0]) {
-          mouth_accessory_combo[0] += 1;
-        } else if (mouth_accessory == mouth_accessory_combo_values[1]) {
-          mouth_accessory_combo[1] += 1;
-        }
-
-        // Checking for Eye Combo 1
-        check_combo(eyes, eye_combo_1_values, eye_combo_1);
-
-        // Checking for Eye Combo 2
-        check_combo(eyes, eye_combo_2_values, eye_combo_2);
-
-        // Checking for Eyewear Combo 1
-        check_combo(eyewear, eyewear_combo_1_values, eyewear_combo_1);
-
-        // Checking for Eyewear Combo 2
-        check_combo(eyewear, eyewear_combo_2_values, eyewear_combo_2);
-
-        // Checking for Eyewear Combo 3
-        check_combo(eyewear, eyewear_combo_3_values, eyewear_combo_3);
-      });
-
-      // Adding Hong Kong Combo Multiplier
-      allMultipliers['background']['hongKongCombo'] = 0;
-      if (hk_combo.length == hk_combo_values.length) {
-        totalMultipliers += 0.3;
-        allMultipliers['background']['hongKongCombo'] += 0.3;
-      }
-
-      // Adding Full Element Combo Multiplier
-      allMultipliers['background']['fullElementalCombo'] = 0;
-      if (full_element_combo.length >= full_element_combo_values.length - 1) {
-        totalMultipliers += 0.3;
-        allMultipliers['background']['fullElementalCombo'] += 0.3;
-      }
-
-      // Adding Basic Element Combo Multiplier
-      allMultipliers['background']['basicElementalCombo'] = 0;
-      if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
-        totalMultipliers += 0.3;
-        allMultipliers['background']['basicElementalCombo'] += 0.3;
-      }
-
-      // BACK_ACCESSORY
-      allMultipliers['backAccessory'] = {};
-      // Adding Back Accessory Combo Multiplier
-      let capeMasterCombo = check_multiplier(
-        back_accessory_combo.length,
-        3,
-        0.1,
-        5,
-        0.2
-      );
-      totalMultipliers += capeMasterCombo;
-      allMultipliers['backAccessory']['capeMasterCombo'] = capeMasterCombo;
-
-      // SKIN
-      allMultipliers['skin'] = {};
-      // Adding Skin Combo 1 Multiplier
-      let waterSpiritCombo = check_multiplier(
-        skin_combo_1.length,
-        3,
-        0.1,
-        5,
-        0.2
-      );
-      totalMultipliers += waterSpiritCombo;
-      allMultipliers['skin']['fullElementalCombo'] = waterSpiritCombo;
-
-      // Adding Skin Combo 2 Multiplier
-      let alienCombo = check_multiplier(skin_combo_2.length, 3, 0.1, 5, 0.2);
-      totalMultipliers += alienCombo;
-      allMultipliers['skin']['alienCombo'] = alienCombo;
-
-      // CLOTHING
-      allMultipliers['clothing'] = {};
-      // Adding Clothing Combo 1 Multiplier
-      let armorCombo = check_multiplier(
-        clothing_combo_1.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += armorCombo;
-      allMultipliers['clothing']['armorCombo'] = armorCombo;
-
-      // Adding Clothing Combo 2 Multiplier
-      let ninjaCombo = check_multiplier(
-        clothing_combo_2.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += ninjaCombo;
-      allMultipliers['clothing']['ninjaCombo'] = ninjaCombo;
-
-      // Adding Clothing Combo 3 Multiplier
-      let superHeroCombo = check_multiplier(
-        clothing_combo_3.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += superHeroCombo;
-      allMultipliers['clothing']['superHeroCombo'] = superHeroCombo;
-
-      // Adding Clothing Combo 4 Multiplier
-      let kfHeroCombo = check_multiplier(
-        clothing_combo_4.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += kfHeroCombo;
-      allMultipliers['clothing']['kfHeroCombo'] = kfHeroCombo;
-
-      // Adding Clothing Combo 5 Multiplier
-      let streetKarateCombo = check_multiplier(
-        clothing_combo_5.length,
-        3,
-        0.15,
-        5,
-        0.25
-      );
-      totalMultipliers += streetKarateCombo;
-      allMultipliers['clothing']['streetKarateCombo'] = streetKarateCombo;
-
-      // Adding Clothing Combo 6 Multiplier
-      let animeCombo = check_multiplier(
-        clothing_combo_6.length,
-        3,
-        0.1,
-        5,
-        0.2
-      );
-      totalMultipliers += animeCombo;
-      allMultipliers['clothing']['animeCombo'] = animeCombo;
-
-      // FRONT_ACCESSORY
-      allMultipliers['frontAccessory'] = {};
-      // Adding Front Accessory Combo Multiplier
-      let fighterCombo = check_multiplier(
-        front_accessory_combo.length,
-        3,
-        0.1,
-        5,
-        0.2
-      );
-      totalMultipliers += fighterCombo;
-      allMultipliers['frontAccessory']['fighterCombo'] = fighterCombo;
-
-      // HAIR
-      allMultipliers['hair'] = {};
-      // Adding Hair Combo 1 Multiplier
-      let legendaryHairCombo = 0;
-      legendaryHairCombo += check_multiplier(hair_combo_1[0], 2, 0.25, 4, 0.35);
-      legendaryHairCombo += check_multiplier(hair_combo_1[1], 2, 0.25, 4, 0.35);
-      legendaryHairCombo += check_multiplier(hair_combo_1[2], 2, 0.25, 4, 0.35);
-      legendaryHairCombo += check_multiplier(hair_combo_1[3], 2, 0.25, 4, 0.35);
-      legendaryHairCombo += check_multiplier(hair_combo_1[4], 2, 0.25, 4, 0.35);
-      totalMultipliers += legendaryHairCombo;
-      allMultipliers['hair']['legendary'] = legendaryHairCombo;
-
-      // Adding Hair Combo 2 Multiplier
-      let superFireCombo = check_multiplier(
-        hair_combo_2.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += superFireCombo;
-      allMultipliers['hair']['superFireCombo'] = superFireCombo;
-
-      // Adding Hair Combo 3 Multiplier
-      let luFuCombo = check_multiplier(hair_combo_3.length, 3, 0.25, 5, 0.35);
-      totalMultipliers += luFuCombo;
-      allMultipliers['hair']['luFuCombo'] = luFuCombo;
-
-      // Adding Hair Combo 4 Multiplier
-      let maskCombo = check_multiplier(hair_combo_4.length, 3, 0.15, 5, 0.25);
-      totalMultipliers += maskCombo;
-      allMultipliers['hair']['maskCombo'] = maskCombo;
-
-      // HAIR_ACCESSORY
-      allMultipliers['hairAccessory'] = {};
-      // Adding Hair Accessory Combo Multiplier
-      let legendaryHairAccessory = 0;
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[0],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[1],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[2],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[3],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[4],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[5],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[6],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      legendaryHairAccessory += check_multiplier(
-        hair_accessory_combo[7],
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += legendaryHairAccessory;
-      allMultipliers['hairAccessory']['legendary'] = legendaryHairAccessory;
-
-      // MOUTH_ACCESSORY
-      allMultipliers['mouthAccessory'] = {};
-      // Adding Mouth Accessory Combo Multiplier
-      let legendaryMouthAccessory = 0;
-      legendaryMouthAccessory += check_multiplier(
-        mouth_accessory_combo[0],
-        2,
-        0.25,
-        4,
-        0.35
-      );
-      legendaryMouthAccessory += check_multiplier(
-        mouth_accessory_combo[1],
-        2,
-        0.25,
-        4,
-        0.35
-      );
-      totalMultipliers += legendaryMouthAccessory;
-      allMultipliers['mouthAccessory']['legendary'] = legendaryMouthAccessory;
-
-      // EYES
-      allMultipliers['eyes'] = {};
-      // Adding Eye Combo 1 Multiplier
-      let laserCombo = check_multiplier(eye_combo_1.length, 3, 0.25, 5, 0.35);
-      totalMultipliers += laserCombo;
-      allMultipliers['eyes']['laserCombo'] = laserCombo;
-
-      // Adding Eye Combo 2 Multiplier
-      let largeEyeCombo = check_multiplier(
-        eye_combo_2.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += largeEyeCombo;
-      allMultipliers['eyes']['largeEyeCombo'] = largeEyeCombo;
-
-      // EYEWEAR
-      allMultipliers['eyewear'] = {};
-      // Adding Eyewear Combo 1 Multiplier
-      let CyclopsCombo = check_multiplier(
-        eyewear_combo_1.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += CyclopsCombo;
-      allMultipliers['eyewear']['CyclopsCombo'] = CyclopsCombo;
-
-      // Adding Eyewear Combo 2 Multiplier
-      let solanaCombo = check_multiplier(
-        eyewear_combo_2.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
-      totalMultipliers += solanaCombo;
-      allMultipliers['eyewear']['solanaCombo'] = solanaCombo;
-
-      // Adding Eyewear Combo 3 Multiplier
-      let VRCombo = check_multiplier(eyewear_combo_3.length, 3, 0.25, 5, 0.35);
-      totalMultipliers += VRCombo;
-      allMultipliers['eyewear']['VRCombo'] = VRCombo;
 
       const elapsed = (end.valueOf() - animal.lastClaim.valueOf()) / 1000;
       let pendingRewards =
@@ -1003,16 +999,25 @@ export const StakingProvider = (props: Props) => {
       pendingRewards /= 10 ** 9;
 
       const baseRewards = pendingRewards;
-      pendingRewards *= totalMultipliers;
+
+      // Get all universal multipliers
+      const multipliers = getMultipliers();
+
+      //   Calculate the total amount of tokens staked
+      const weekDifference = Math.round(
+        (end.valueOf() - animal.stakedAt.valueOf()) / 1000 / 60 / 60 / 24 / 7
+      );
+      const weeklyMultiplier =
+        weekDifference * jungle.weeklyMultiplier.toNumber();
+
+      pendingRewards *= multipliers.total + weeklyMultiplier;
 
       return {
         baseRewards,
         pendingRewards,
-        totalMultipliers,
-        multipliers: allMultipliers,
       };
     },
-    [jungle, stakerInfo]
+    [jungle, stakerInfo, getMultipliers]
   );
 
   // stake animal

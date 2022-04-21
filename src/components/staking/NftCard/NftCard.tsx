@@ -30,8 +30,6 @@ Props) => {
   const [redeemable, setRedeemable] = useState<Rewards>({
     baseRewards: 0,
     pendingRewards: 0,
-    totalMultipliers: 0,
-    multipliers: [],
   });
 
   const [multipliers, setMultipliers] = useState<{
@@ -96,15 +94,15 @@ Props) => {
   useEffect(() => {
     if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
     if (augmentedAnimal?.lastClaim && isStaked) {
-      const reedemable = getPendingStakingRewards(
+      const redeemable = getPendingStakingRewards(
         augmentedAnimal,
         stakingPeriod
       );
-      setRedeemable(reedemable);
+      setRedeemable(redeemable);
       setMultipliers(multipliers);
       // console.log(rewards);
       //@ts-ignore
-      redeemableReward(reedemable.pendingRewards);
+      redeemableReward(redeemable.pendingRewards);
 
       return () => {};
     }
