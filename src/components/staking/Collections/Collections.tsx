@@ -123,7 +123,7 @@ export const Collections = () => {
   const onSetClaimListOnStorage = () => {
     if (stakedAnimals.length <= 10) {
       const autoClaimList = stakedAnimals.map((token, index) => {
-        return `${token.metadata.name}~${index}`;
+        return `${token.metadata.name}`;
       });
       window.sessionStorage.setItem(
         'claimItemList',
@@ -217,9 +217,13 @@ export const Collections = () => {
                     </span>
                   </div>
                   <div className='box3'>
-                    <p style={{ margin: 0 }} className='generalGreenBtn'>
+                    <button
+                      onClick={handleClaimAll}
+                      style={{ margin: 0 }}
+                      className='generalGreenBtn'
+                    >
                       Claim all
-                    </p>
+                    </button>
                   </div>
                 </div>
               </div>

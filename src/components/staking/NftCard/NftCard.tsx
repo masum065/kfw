@@ -27,8 +27,12 @@ Props) => {
 
   const [augmentedAnimal, setAugmentedAnimal] = useState<Animal>();
   const [stakingPeriod, setStakingPeriod] = useState<Date>(new Date());
-  const [redeemable, setRedeemable] = useState<Rewards>({baseRewards: 0, pendingRewards: 0, totalMultipliers: 0, multipliers: []});
-
+  const [redeemable, setRedeemable] = useState<Rewards>({
+    baseRewards: 0,
+    pendingRewards: 0,
+    totalMultipliers: 0,
+    multipliers: [],
+  });
 
   const [multipliers, setMultipliers] = useState<{
     total: number;

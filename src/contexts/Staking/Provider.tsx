@@ -1,12 +1,12 @@
-import { Metadata } from "@metaplex-foundation/mpl-token-metadata";
-import * as anchor from "@project-serum/anchor";
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+import * as anchor from '@project-serum/anchor';
 import {
   AccountInfo as TokenAccount,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import { useWallet } from "@solana/wallet-adapter-react";
+} from '@solana/spl-token';
+import { useWallet } from '@solana/wallet-adapter-react';
 import {
   Keypair,
   PublicKey,
@@ -15,28 +15,28 @@ import {
   SYSVAR_RENT_PUBKEY,
   Transaction,
   TransactionInstruction,
-} from "@solana/web3.js";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import constants from "../../constants";
-import idl from "../../constants/idls/mainnet.jungle.json";
+} from '@solana/web3.js';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en';
+import relativeTime from 'dayjs/plugin/relativeTime'; // import plugin
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import constants from '../../constants';
+import idl from '../../constants/idls/mainnet.jungle.json';
 import {
   IDL as JundleIdl,
   Jungle as JungleProgram,
-} from "../../constants/types/jungle";
-import { buildLeaves, factionToNumber } from "../../utils";
-import { MerkleTree } from "../../utils/merkleTree";
-import { StackContext } from "./Context";
-import { Animal, Jungle, StakedMetaData, StakerInfo } from "./types";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime"; // import plugin
-import "dayjs/locale/en";
+} from '../../constants/types/jungle';
+import { buildLeaves, factionToNumber } from '../../utils';
+import { MerkleTree } from '../../utils/merkleTree';
+import { StackContext } from './Context';
+import { Animal, Jungle, StakedMetaData, StakerInfo } from './types';
 
-const kfwComboEncoding: any = require("../../constants/kfwComboEncoding.json");
+const kfwComboEncoding: any = require('../../constants/kfwComboEncoding.json');
 
 dayjs.extend(relativeTime); // use plugin
-dayjs.locale("en"); // use locale
+dayjs.locale('en'); // use locale
 
 // Program Id
 const programID = new PublicKey(idl.metadata.address);
@@ -131,7 +131,7 @@ export const StakingProvider = (props: Props) => {
   const provider = useMemo(() => {
     if (!props.connection) return;
     return new anchor.Provider(props.connection, wallet as any, {
-      preflightCommitment: "confirmed",
+      preflightCommitment: 'confirmed',
     });
   }, [props.connection, wallet]);
 
@@ -178,13 +178,13 @@ export const StakingProvider = (props: Props) => {
           };
         })
         .sort((a, b) => {
-          const na = Number(a.metadata.name.split("#")[1]);
-          const nb = Number(b.metadata.name.split("#")[1]);
+          const na = Number(a.metadata.name.split('#')[1]);
+          const nb = Number(b.metadata.name.split('#')[1]);
           return na - nb;
         });
       setAnimals(data);
     } catch (err) {
-      console.log("Failed fetching owned tokens", err);
+      console.log('Failed fetching owned tokens', err);
     } finally {
       setAnimalsStatus({
         loading: false,
@@ -234,13 +234,13 @@ export const StakingProvider = (props: Props) => {
           };
         })
         .sort((a, b) => {
-          const na = Number(a.metadata.name.split("#")[1]);
-          const nb = Number(b.metadata.name.split("#")[1]);
+          const na = Number(a.metadata.name.split('#')[1]);
+          const nb = Number(b.metadata.name.split('#')[1]);
           return na - nb;
         });
       setStakedAnimals(data);
     } catch (err) {
-      console.log("Failed fetching owned tokens", err);
+      console.log('Failed fetching owned tokens', err);
     } finally {
       setStakedAnimalsStatus({
         loading: false,
@@ -264,7 +264,7 @@ export const StakingProvider = (props: Props) => {
     );
 
     const [jungleAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("jungle"), constants.jungleKey.toBuffer()],
+      [Buffer.from('jungle'), constants.jungleKey.toBuffer()],
       programID
     );
 
@@ -310,7 +310,7 @@ export const StakingProvider = (props: Props) => {
       );
       setUserAccount(await token.getAccountInfo(associatedAddress));
     } catch (err) {
-      console.log("User has no account yet");
+      console.log('User has no account yet');
     }
   }, [props.connection, jungle, wallet]);
 
@@ -336,13 +336,13 @@ export const StakingProvider = (props: Props) => {
       );
 
       const [jungleAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("jungle", "utf8"), jungle.key.toBuffer()],
+        [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
         program.programId
       );
 
       const [stakerInfo] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("staker", "utf8"),
+          Buffer.from('staker', 'utf8'),
           jungleAddress.toBuffer(),
           wallet.publicKey.toBuffer(),
         ],
@@ -354,12 +354,12 @@ export const StakingProvider = (props: Props) => {
       );
       const holdings = stakerInfoAccount.holdings.toNumber();
       const staked: any = stakerInfoAccount.staked;
-      console.log("Holdings: ", holdings);
-      console.log("Staked", staked);
+      console.log('Holdings: ', holdings);
+      console.log('Staked', staked);
 
       setStakerInfo({ holdings, staked });
     } catch (e) {
-      console.log("Staker Info Account not Created Yet!");
+      console.log('Staker Info Account not Created Yet!');
     }
   }, [props.connection, jungle, wallet, provider]);
   useEffect(() => {
@@ -380,7 +380,7 @@ export const StakingProvider = (props: Props) => {
     } catch (err) {
       console.log(err);
     } finally {
-      console.log("finish");
+      console.log('finish');
     }
   }, [jungle, wallet, fetchUserAccount]);
 
@@ -416,7 +416,7 @@ export const StakingProvider = (props: Props) => {
           baseRewards: 0,
           pendingRewards: 0,
           totalMultipliers: 0,
-          multipliers: []
+          multipliers: [],
         };
 
       // Total Multipliers
@@ -430,7 +430,7 @@ export const StakingProvider = (props: Props) => {
       const weeklyMultiplier =
         weekDifference * jungle.weeklyMultiplier.toNumber();
       totalMultipliers += weeklyMultiplier;
-      allMultipliers["weeklyMultiplier"] = weeklyMultiplier;
+      allMultipliers['weeklyMultiplier'] = weeklyMultiplier;
 
       // Fetch amount of animals staked from StakerInfo
       const holdings = stakerInfo.holdings;
@@ -450,7 +450,7 @@ export const StakingProvider = (props: Props) => {
         holdingsMultiplier += 0.2;
       }
       totalMultipliers += holdingsMultiplier;
-      allMultipliers["holdingsMultiplier"] = holdingsMultiplier;
+      allMultipliers['holdingsMultiplier'] = holdingsMultiplier;
 
       // Calculating Combo Multipliers
 
@@ -569,14 +569,14 @@ export const StakingProvider = (props: Props) => {
         let eyewear = animal.eyewear;
 
         // BACKGROUND
-        allMultipliers["background"] = {}
+        allMultipliers['background'] = {};
 
         // Adding to Multiplier if any animal has legendary background
         let index = legendary_bg_values.indexOf(background);
-        allMultipliers["background"]["legendaryCombo"] = 0;
+        allMultipliers['background']['legendaryCombo'] = 0;
         if (index > -1) {
           totalMultipliers += 0.4;
-          allMultipliers["background"]["legendaryCombo"] += 0.4;
+          allMultipliers['background']['legendaryCombo'] += 0.4;
         }
 
         // Checking for Hong Kong Background Combo
@@ -699,28 +699,28 @@ export const StakingProvider = (props: Props) => {
       });
 
       // Adding Hong Kong Combo Multiplier
-      allMultipliers["background"]["hongKongCombo"] = 0;
+      allMultipliers['background']['hongKongCombo'] = 0;
       if (hk_combo.length == hk_combo_values.length) {
         totalMultipliers += 0.3;
-        allMultipliers["background"]["hongKongCombo"] += 0.3;
+        allMultipliers['background']['hongKongCombo'] += 0.3;
       }
 
       // Adding Full Element Combo Multiplier
-      allMultipliers["background"]["fullElementalCombo"] = 0;
+      allMultipliers['background']['fullElementalCombo'] = 0;
       if (full_element_combo.length >= full_element_combo_values.length - 1) {
         totalMultipliers += 0.3;
-        allMultipliers["background"]["fullElementalCombo"] += 0.3;
+        allMultipliers['background']['fullElementalCombo'] += 0.3;
       }
 
       // Adding Basic Element Combo Multiplier
-      allMultipliers["background"]["basicElementalCombo"] = 0;
+      allMultipliers['background']['basicElementalCombo'] = 0;
       if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
         totalMultipliers += 0.3;
-        allMultipliers["background"]["basicElementalCombo"] += 0.3;
+        allMultipliers['background']['basicElementalCombo'] += 0.3;
       }
 
       // BACK_ACCESSORY
-      allMultipliers["backAccessory"] = {};
+      allMultipliers['backAccessory'] = {};
       // Adding Back Accessory Combo Multiplier
       let capeMasterCombo = check_multiplier(
         back_accessory_combo.length,
@@ -730,22 +730,28 @@ export const StakingProvider = (props: Props) => {
         0.2
       );
       totalMultipliers += capeMasterCombo;
-      allMultipliers["backAccessory"]["capeMasterCombo"] = capeMasterCombo;
+      allMultipliers['backAccessory']['capeMasterCombo'] = capeMasterCombo;
 
       // SKIN
-      allMultipliers['skin'] = {}
+      allMultipliers['skin'] = {};
       // Adding Skin Combo 1 Multiplier
-      let waterSpiritCombo = check_multiplier(skin_combo_1.length, 3, 0.1, 5, 0.2);
+      let waterSpiritCombo = check_multiplier(
+        skin_combo_1.length,
+        3,
+        0.1,
+        5,
+        0.2
+      );
       totalMultipliers += waterSpiritCombo;
-      allMultipliers["skin"]["fullElementalCombo"] = waterSpiritCombo;
+      allMultipliers['skin']['fullElementalCombo'] = waterSpiritCombo;
 
       // Adding Skin Combo 2 Multiplier
       let alienCombo = check_multiplier(skin_combo_2.length, 3, 0.1, 5, 0.2);
       totalMultipliers += alienCombo;
-      allMultipliers["skin"]["alienCombo"] = alienCombo;
+      allMultipliers['skin']['alienCombo'] = alienCombo;
 
       // CLOTHING
-      allMultipliers["clothing"] = {};
+      allMultipliers['clothing'] = {};
       // Adding Clothing Combo 1 Multiplier
       let armorCombo = check_multiplier(
         clothing_combo_1.length,
@@ -755,7 +761,7 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += armorCombo;
-      allMultipliers["clothing"]["armorCombo"] = armorCombo;
+      allMultipliers['clothing']['armorCombo'] = armorCombo;
 
       // Adding Clothing Combo 2 Multiplier
       let ninjaCombo = check_multiplier(
@@ -766,7 +772,7 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += ninjaCombo;
-      allMultipliers["clothing"]["ninjaCombo"] = ninjaCombo;
+      allMultipliers['clothing']['ninjaCombo'] = ninjaCombo;
 
       // Adding Clothing Combo 3 Multiplier
       let superHeroCombo = check_multiplier(
@@ -777,7 +783,7 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += superHeroCombo;
-      allMultipliers["clothing"]["superHeroCombo"] = superHeroCombo;
+      allMultipliers['clothing']['superHeroCombo'] = superHeroCombo;
 
       // Adding Clothing Combo 4 Multiplier
       let kfHeroCombo = check_multiplier(
@@ -788,7 +794,7 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += kfHeroCombo;
-      allMultipliers["clothing"]["kfHeroCombo"] = kfHeroCombo;
+      allMultipliers['clothing']['kfHeroCombo'] = kfHeroCombo;
 
       // Adding Clothing Combo 5 Multiplier
       let streetKarateCombo = check_multiplier(
@@ -799,7 +805,7 @@ export const StakingProvider = (props: Props) => {
         0.25
       );
       totalMultipliers += streetKarateCombo;
-      allMultipliers["clothing"]["streetKarateCombo"] = streetKarateCombo;
+      allMultipliers['clothing']['streetKarateCombo'] = streetKarateCombo;
 
       // Adding Clothing Combo 6 Multiplier
       let animeCombo = check_multiplier(
@@ -810,10 +816,10 @@ export const StakingProvider = (props: Props) => {
         0.2
       );
       totalMultipliers += animeCombo;
-      allMultipliers["clothing"]["animeCombo"] = animeCombo;
+      allMultipliers['clothing']['animeCombo'] = animeCombo;
 
       // FRONT_ACCESSORY
-      allMultipliers["frontAccessory"] = {};
+      allMultipliers['frontAccessory'] = {};
       // Adding Front Accessory Combo Multiplier
       let fighterCombo = check_multiplier(
         front_accessory_combo.length,
@@ -823,10 +829,10 @@ export const StakingProvider = (props: Props) => {
         0.2
       );
       totalMultipliers += fighterCombo;
-      allMultipliers["frontAccessory"]["fighterCombo"] = fighterCombo;
+      allMultipliers['frontAccessory']['fighterCombo'] = fighterCombo;
 
       // HAIR
-      allMultipliers["hair"] = {};
+      allMultipliers['hair'] = {};
       // Adding Hair Combo 1 Multiplier
       let legendaryHairCombo = 0;
       legendaryHairCombo += check_multiplier(hair_combo_1[0], 2, 0.25, 4, 0.35);
@@ -835,7 +841,7 @@ export const StakingProvider = (props: Props) => {
       legendaryHairCombo += check_multiplier(hair_combo_1[3], 2, 0.25, 4, 0.35);
       legendaryHairCombo += check_multiplier(hair_combo_1[4], 2, 0.25, 4, 0.35);
       totalMultipliers += legendaryHairCombo;
-      allMultipliers["hair"]["legendary"] = legendaryHairCombo;
+      allMultipliers['hair']['legendary'] = legendaryHairCombo;
 
       // Adding Hair Combo 2 Multiplier
       let superFireCombo = check_multiplier(
@@ -846,32 +852,20 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += superFireCombo;
-      allMultipliers["hair"]["superFireCombo"] = superFireCombo;
+      allMultipliers['hair']['superFireCombo'] = superFireCombo;
 
       // Adding Hair Combo 3 Multiplier
-      let luFuCombo = check_multiplier(
-        hair_combo_3.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
+      let luFuCombo = check_multiplier(hair_combo_3.length, 3, 0.25, 5, 0.35);
       totalMultipliers += luFuCombo;
-      allMultipliers["hair"]["luFuCombo"] = luFuCombo;
+      allMultipliers['hair']['luFuCombo'] = luFuCombo;
 
       // Adding Hair Combo 4 Multiplier
-      let maskCombo = check_multiplier(
-        hair_combo_4.length,
-        3,
-        0.15,
-        5,
-        0.25
-      );
+      let maskCombo = check_multiplier(hair_combo_4.length, 3, 0.15, 5, 0.25);
       totalMultipliers += maskCombo;
-      allMultipliers["hair"]["maskCombo"] = maskCombo;
+      allMultipliers['hair']['maskCombo'] = maskCombo;
 
       // HAIR_ACCESSORY
-      allMultipliers["hairAccessory"] = {};
+      allMultipliers['hairAccessory'] = {};
       // Adding Hair Accessory Combo Multiplier
       let legendaryHairAccessory = 0;
       legendaryHairAccessory += check_multiplier(
@@ -931,10 +925,10 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += legendaryHairAccessory;
-      allMultipliers["hairAccessory"]["legendary"] = legendaryHairAccessory;
+      allMultipliers['hairAccessory']['legendary'] = legendaryHairAccessory;
 
       // MOUTH_ACCESSORY
-      allMultipliers["mouthAccessory"] = {};
+      allMultipliers['mouthAccessory'] = {};
       // Adding Mouth Accessory Combo Multiplier
       let legendaryMouthAccessory = 0;
       legendaryMouthAccessory += check_multiplier(
@@ -952,20 +946,14 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += legendaryMouthAccessory;
-      allMultipliers["mouthAccessory"]["legendary"] = legendaryMouthAccessory;
+      allMultipliers['mouthAccessory']['legendary'] = legendaryMouthAccessory;
 
       // EYES
-      allMultipliers["eyes"] = {};
+      allMultipliers['eyes'] = {};
       // Adding Eye Combo 1 Multiplier
-      let laserCombo = check_multiplier(
-        eye_combo_1.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
+      let laserCombo = check_multiplier(eye_combo_1.length, 3, 0.25, 5, 0.35);
       totalMultipliers += laserCombo;
-      allMultipliers["eyes"]["laserCombo"] = laserCombo;
+      allMultipliers['eyes']['laserCombo'] = laserCombo;
 
       // Adding Eye Combo 2 Multiplier
       let largeEyeCombo = check_multiplier(
@@ -976,10 +964,10 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += largeEyeCombo;
-      allMultipliers["eyes"]["largeEyeCombo"] = largeEyeCombo;
+      allMultipliers['eyes']['largeEyeCombo'] = largeEyeCombo;
 
       // EYEWEAR
-      allMultipliers["eyewear"] = {};
+      allMultipliers['eyewear'] = {};
       // Adding Eyewear Combo 1 Multiplier
       let CyclopsCombo = check_multiplier(
         eyewear_combo_1.length,
@@ -989,7 +977,7 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += CyclopsCombo;
-      allMultipliers["eyewear"]["CyclopsCombo"] = CyclopsCombo;
+      allMultipliers['eyewear']['CyclopsCombo'] = CyclopsCombo;
 
       // Adding Eyewear Combo 2 Multiplier
       let solanaCombo = check_multiplier(
@@ -1000,25 +988,19 @@ export const StakingProvider = (props: Props) => {
         0.35
       );
       totalMultipliers += solanaCombo;
-      allMultipliers["eyewear"]["solanaCombo"] = solanaCombo;
+      allMultipliers['eyewear']['solanaCombo'] = solanaCombo;
 
       // Adding Eyewear Combo 3 Multiplier
-      let VRCombo = check_multiplier(
-        eyewear_combo_3.length,
-        3,
-        0.25,
-        5,
-        0.35
-      );
+      let VRCombo = check_multiplier(eyewear_combo_3.length, 3, 0.25, 5, 0.35);
       totalMultipliers += VRCombo;
-      allMultipliers["eyewear"]["VRCombo"] = VRCombo;
+      allMultipliers['eyewear']['VRCombo'] = VRCombo;
 
       const elapsed = (end.valueOf() - animal.lastClaim.valueOf()) / 1000;
       let pendingRewards =
         (parseFloat((animal.emissionsPerDay || animal.emissionsPerDay) as any) /
           86400) *
         elapsed;
-      pendingRewards /= 10 ** 9
+      pendingRewards /= 10 ** 9;
 
       const baseRewards = pendingRewards;
       pendingRewards *= totalMultipliers;
@@ -1027,8 +1009,8 @@ export const StakingProvider = (props: Props) => {
         baseRewards,
         pendingRewards,
         totalMultipliers,
-        multipliers: allMultipliers
-      }
+        multipliers: allMultipliers,
+      };
     },
     [jungle, stakerInfo]
   );
@@ -1045,20 +1027,20 @@ export const StakingProvider = (props: Props) => {
       );
 
       const [jungleAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("jungle", "utf8"), jungle.key.toBuffer()],
+        [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
         program.programId
       );
       const [animalAddress, animalBump] = await PublicKey.findProgramAddress(
-        [Buffer.from("animal", "utf8"), animal.mint.toBuffer()],
+        [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
       const [deposit, depositBump] = await PublicKey.findProgramAddress(
-        [Buffer.from("deposit", "utf8"), animal.mint.toBuffer()],
+        [Buffer.from('deposit', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
       const [stakerInfo, stakerInfoBumps] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("staker", "utf8"),
+          Buffer.from('staker', 'utf8'),
           jungleAddress.toBuffer(),
           wallet.publicKey.toBuffer(),
         ],
@@ -1122,40 +1104,40 @@ export const StakingProvider = (props: Props) => {
         const attributes = animal.uriData.attributes;
 
         const background: string = attributes?.find(
-          (x: any) => x.trait_type.toLowerCase() === "Background".toLowerCase()
+          (x: any) => x.trait_type.toLowerCase() === 'Background'.toLowerCase()
         )?.value;
         const back_accessory: string = attributes?.find(
           (x: any) =>
             x.trait_type.toLowerCase() ===
-            "Body accessories (Back)".toLowerCase()
+            'Body accessories (Back)'.toLowerCase()
         )?.value;
         const skin: string = attributes?.find(
-          (x: any) => x.trait_type.toLowerCase() === "Body".toLowerCase()
+          (x: any) => x.trait_type.toLowerCase() === 'Body'.toLowerCase()
         )?.value;
         const clothing: string = attributes?.find(
-          (x: any) => x.trait_type.toLowerCase() === "Clothes".toLowerCase()
+          (x: any) => x.trait_type.toLowerCase() === 'Clothes'.toLowerCase()
         )?.value;
         const front_accessory: string = attributes?.find(
           (x: any) =>
             x.trait_type.toLowerCase() ===
-            "Body accessories (Front)".toLowerCase()
+            'Body accessories (Front)'.toLowerCase()
         )?.value;
         const hair: string = attributes?.find(
-          (x: any) => x.trait_type.toLowerCase() === "Hair".toLowerCase()
+          (x: any) => x.trait_type.toLowerCase() === 'Hair'.toLowerCase()
         )?.value;
         const hair_accessory: string = attributes?.find(
           (x: any) =>
-            x.trait_type.toLowerCase() === "Hair accessories".toLowerCase()
+            x.trait_type.toLowerCase() === 'Hair accessories'.toLowerCase()
         )?.value;
         const mouth_accessory: string = attributes?.find(
           (x: any) =>
-            x.trait_type.toLowerCase() === "Mouth accessories".toLowerCase()
+            x.trait_type.toLowerCase() === 'Mouth accessories'.toLowerCase()
         )?.value;
         const eyes: string = attributes?.find(
-          (x: any) => x.trait_type.toLowerCase() === "Eyes".toLowerCase()
+          (x: any) => x.trait_type.toLowerCase() === 'Eyes'.toLowerCase()
         )?.value;
         const eyewear: string = attributes?.find(
-          (x: any) => x.trait_type.toLowerCase() === "Eyewear".toLowerCase()
+          (x: any) => x.trait_type.toLowerCase() === 'Eyewear'.toLowerCase()
         )?.value;
 
         const metadata: StakedMetaData = {
@@ -1205,7 +1187,7 @@ export const StakingProvider = (props: Props) => {
 
         toast.update(joinToast, {
           render: `${animal.metadata.name} is successfully Staked!`,
-          type: "success",
+          type: 'success',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
@@ -1216,13 +1198,13 @@ export const StakingProvider = (props: Props) => {
       } catch (err) {
         toast.update(joinToast, {
           render: `Staking Failed!`,
-          type: "error",
+          type: 'error',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
           autoClose: 4000,
         });
-        console.log("Staking Failed!", err);
+        console.log('Staking Failed!', err);
       }
     },
     [
@@ -1252,30 +1234,30 @@ export const StakingProvider = (props: Props) => {
         provider
       );
       const [jungleAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("jungle", "utf8"), jungle.key.toBuffer()],
+        [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
         program.programId
       );
       const [rewardsAccount] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("rewards", "utf8"),
+          Buffer.from('rewards', 'utf8'),
           jungle.key.toBuffer(),
           jungle.mint.toBuffer(),
         ],
         program.programId
       );
       const [animalAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("animal", "utf8"), animal.mint.toBuffer()],
+        [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
 
       const [deposit] = await PublicKey.findProgramAddress(
-        [Buffer.from("deposit", "utf8"), animal.mint.toBuffer()],
+        [Buffer.from('deposit', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
 
       const [stakerInfo] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("staker", "utf8"),
+          Buffer.from('staker', 'utf8'),
           jungleAddress.toBuffer(),
           wallet.publicKey.toBuffer(),
         ],
@@ -1369,7 +1351,7 @@ export const StakingProvider = (props: Props) => {
 
         toast.update(unStakeToast, {
           render: `${animal.metadata.name} has successfully Unstaked`,
-          type: "success",
+          type: 'success',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
@@ -1382,7 +1364,7 @@ export const StakingProvider = (props: Props) => {
       } catch (err) {
         toast.update(unStakeToast, {
           render: `Failed to Unstake!`,
-          type: "error",
+          type: 'error',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
@@ -1415,7 +1397,7 @@ export const StakingProvider = (props: Props) => {
         provider
       );
       const [animalAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("animal"), mint.toBuffer()],
+        [Buffer.from('animal'), mint.toBuffer()],
         programID
       );
 
@@ -1476,7 +1458,7 @@ export const StakingProvider = (props: Props) => {
     async (animal: Animal) => {
       if (!wallet || !wallet.publicKey || !wallet.publicKey || !jungle) return;
 
-      const claimToast = toast.loading("Claiming Earnings...");
+      const claimToast = toast.loading('Claiming Earnings...');
 
       const program = new anchor.Program<JungleProgram>(
         JundleIdl,
@@ -1484,25 +1466,25 @@ export const StakingProvider = (props: Props) => {
         provider
       );
       const [jungleAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("jungle", "utf8"), jungle.key.toBuffer()],
+        [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
         program.programId
       );
       const [rewardsAccount] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("rewards", "utf8"),
+          Buffer.from('rewards', 'utf8'),
           jungle.key.toBuffer(),
           jungle.mint.toBuffer(),
         ],
         program.programId
       );
       const [animalAddress] = await PublicKey.findProgramAddress(
-        [Buffer.from("animal", "utf8"), animal.mint.toBuffer()],
+        [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
         program.programId
       );
 
       const [stakerInfo] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("staker", "utf8"),
+          Buffer.from('staker', 'utf8'),
           jungleAddress.toBuffer(),
           wallet.publicKey.toBuffer(),
         ],
@@ -1552,8 +1534,8 @@ export const StakingProvider = (props: Props) => {
         console.log(txid);
 
         toast.update(claimToast, {
-          render: "Claiming successful",
-          type: "success",
+          render: 'Claiming successful',
+          type: 'success',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
@@ -1565,8 +1547,8 @@ export const StakingProvider = (props: Props) => {
         fetchUserAccount();
       } catch (err) {
         toast.update(claimToast, {
-          render: "Failed to Claim Earnings",
-          type: "error",
+          render: 'Failed to Claim Earnings',
+          type: 'error',
           isLoading: false,
           closeOnClick: true,
           closeButton: true,
@@ -1588,11 +1570,18 @@ export const StakingProvider = (props: Props) => {
 
   // claim all Staking Rewards
   const claimAllStakingRewards = useCallback(async () => {
+    //@ts-ignore
+    const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
     if (!stakedAnimals) return;
     if (!wallet || !wallet.publicKey || !jungle || !provider) return;
+
+    const claimItems = stakedAnimals.filter((animal, index) =>
+      claimList.includes(animal.metadata.name + '~' + index)
+    );
+
     const feePayer = wallet.publicKey;
 
-    const claimToast = toast.loading("Claiming All Earnings...");
+    const claimToast = toast.loading('Claiming All Earnings...');
 
     const program = new anchor.Program<JungleProgram>(
       JundleIdl,
@@ -1600,12 +1589,12 @@ export const StakingProvider = (props: Props) => {
       provider
     );
     const [jungleAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("jungle", "utf8"), jungle.key.toBuffer()],
+      [Buffer.from('jungle', 'utf8'), jungle.key.toBuffer()],
       program.programId
     );
     const [rewardsAccount] = await PublicKey.findProgramAddress(
       [
-        Buffer.from("rewards", "utf8"),
+        Buffer.from('rewards', 'utf8'),
         jungle.key.toBuffer(),
         jungle.mint.toBuffer(),
       ],
@@ -1614,7 +1603,7 @@ export const StakingProvider = (props: Props) => {
 
     const [stakerAddress] = await PublicKey.findProgramAddress(
       [
-        Buffer.from("staker", "utf8"),
+        Buffer.from('staker', 'utf8'),
         jungleAddress.toBuffer(),
         wallet.publicKey.toBuffer(),
       ],
@@ -1641,38 +1630,64 @@ export const StakingProvider = (props: Props) => {
         )
       );
 
+    // await Promise.all(
+    //   avaliableStakedAnimals
+    //     // .filter((animal) => {
+    //     //   const endDate = dayjs(animal?.lastClaim).add(3, "days");
+    //     //   if (animal && dayjs(endDate).diff(dayjs()) <= 0) {
+    //     //     return true;
+    //     //   } else return false;
+    //     // })
+    //     .map(async (animal) => {
+    //       const [animalAddress] = await PublicKey.findProgramAddress(
+    //         [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
+    //         program.programId
+    //       );
+    //       transaction.add(
+    //         program.instruction.claimStaking({
+    //           accounts: {
+    //             jungle: jungleAddress,
+    //             escrow: jungle.escrow,
+    //             animal: animalAddress,
+    //             stakerInfo: stakerAddress,
+    //             staker: feePayer,
+    //             mint: jungle.mint,
+    //             stakerAccount: stakerAccount,
+    //             rewardsAccount: rewardsAccount,
+    //             tokenProgram: TOKEN_PROGRAM_ID,
+    //             clock: SYSVAR_CLOCK_PUBKEY,
+    //             rent: SYSVAR_RENT_PUBKEY,
+    //             systemProgram: SystemProgram.programId,
+    //           },
+    //         })
+    //       );
+    //     })
+    // );
     await Promise.all(
-      avaliableStakedAnimals
-        .filter((animal) => {
-          const endDate = dayjs(animal?.lastClaim).add(3, "days");
-          if (animal && dayjs(endDate).diff(dayjs()) <= 0) {
-            return true;
-          } else return false;
-        })
-        .map(async (animal) => {
-          const [animalAddress] = await PublicKey.findProgramAddress(
-            [Buffer.from("animal", "utf8"), animal.mint.toBuffer()],
-            program.programId
-          );
-          transaction.add(
-            program.instruction.claimStaking({
-              accounts: {
-                jungle: jungleAddress,
-                escrow: jungle.escrow,
-                animal: animalAddress,
-                stakerInfo: stakerAddress,
-                staker: feePayer,
-                mint: jungle.mint,
-                stakerAccount: stakerAccount,
-                rewardsAccount: rewardsAccount,
-                tokenProgram: TOKEN_PROGRAM_ID,
-                clock: SYSVAR_CLOCK_PUBKEY,
-                rent: SYSVAR_RENT_PUBKEY,
-                systemProgram: SystemProgram.programId,
-              },
-            })
-          );
-        })
+      claimItems.map(async (animal) => {
+        const [animalAddress] = await PublicKey.findProgramAddress(
+          [Buffer.from('animal', 'utf8'), animal.mint.toBuffer()],
+          program.programId
+        );
+        transaction.add(
+          program.instruction.claimStaking({
+            accounts: {
+              jungle: jungleAddress,
+              escrow: jungle.escrow,
+              animal: animalAddress,
+              stakerInfo: stakerAddress,
+              staker: feePayer,
+              mint: jungle.mint,
+              stakerAccount: stakerAccount,
+              rewardsAccount: rewardsAccount,
+              tokenProgram: TOKEN_PROGRAM_ID,
+              clock: SYSVAR_CLOCK_PUBKEY,
+              rent: SYSVAR_RENT_PUBKEY,
+              systemProgram: SystemProgram.programId,
+            },
+          })
+        );
+      })
     );
     try {
       const signature = await wallet.sendTransaction(
@@ -1680,11 +1695,11 @@ export const StakingProvider = (props: Props) => {
         props.connection
       );
 
-      await props.connection.confirmTransaction(signature, "processed");
+      await props.connection.confirmTransaction(signature, 'processed');
 
       toast.update(claimToast, {
-        render: "Claiming successful",
-        type: "success",
+        render: 'Claiming successful',
+        type: 'success',
         isLoading: false,
         closeOnClick: true,
         closeButton: true,
@@ -1698,8 +1713,8 @@ export const StakingProvider = (props: Props) => {
       }, 20000);
     } catch (err) {
       toast.update(claimToast, {
-        render: "Failed to Claim Earnings",
-        type: "error",
+        render: 'Failed to Claim Earnings',
+        type: 'error',
         isLoading: false,
         closeOnClick: true,
         closeButton: true,
@@ -1760,7 +1775,7 @@ export const StakingProvider = (props: Props) => {
 
       <div>
         <ToastContainer
-          position="bottom-left"
+          position='bottom-left'
           autoClose={4000}
           hideProgressBar={false}
           newestOnTop={false}
