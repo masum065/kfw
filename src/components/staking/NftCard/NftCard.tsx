@@ -151,13 +151,11 @@ Props) => {
           </span>
         </div> */}
 
-        {/* {augmentedAnimal?.lastClaim && isStaked ? (
+        {/* {(augmentedAnimal?.lastClaim && isStaked) && (
           <div className='multiplier-box'>
             <span>Pending Earnings</span>{' '}
-            <span>{redeemable.toPrecision(5)}</span>
+            <span>{redeemable.pendingRewards.toPrecision(5)}</span>
           </div>
-        ) : (
-          ''
         )} */}
       </div>
 

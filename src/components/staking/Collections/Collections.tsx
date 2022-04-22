@@ -27,12 +27,9 @@ export const Collections = () => {
     animals,
     stakedAnimals,
     refreshAnimals,
-    userAccount,
-    stakeAnimal,
     unstakeAnimal,
-    claimStakingRewards,
     claimAllStakingRewards,
-    getMultipliers,
+    multipliers: fetchedMultipliers,
   } = useStack();
 
   const handleClaimAll = useCallback(async () => {
@@ -126,9 +123,9 @@ export const Collections = () => {
   // Get and Set multiplier list
   useEffect(() => {
     if (!val.length) {
-      setMultipliers(getMultipliers().list);
+      setMultipliers(fetchedMultipliers.list);
     }
-  }, [getMultipliers, redeemableRewards]);
+  }, [fetchedMultipliers, redeemableRewards]);
 
   // const [val, setVal] = useState
 
@@ -139,14 +136,13 @@ export const Collections = () => {
       });
     }
   }, [stakedAnimals]);
-  // var result =
 
-  useEffect(() => {
-    if (!val.length) {
-      getMultipliers();
-      return;
-    }
-  }, [val]);
+  // useEffect(() => {
+  //   if (!val.length) {
+  //     fetchedMultipliers;
+  //     return;
+  //   }
+  // }, [val]);
   return (
     <div className='contentContainer position-relative'>
       <div className='aboutContainerWrap'>

@@ -103,6 +103,7 @@ export const StakingProvider = (props: Props) => {
   const [jungle, setJungle] = useState<Jungle>();
   const [stakerInfo, setStakerInfo] = useState<StakerInfo>();
   const [stakedAnimals, setStakedAnimals] = useState<Animal[]>();
+  const [multipliers, setMultipliers] = useState<Multipliers>({total: 0, list: []});
   const [animalsStatus, setAnimalsStatus] = useState<any>({
     loading: false,
     loadingEnd: true,
@@ -969,12 +970,19 @@ export const StakingProvider = (props: Props) => {
     let VRCombo = check_multiplier(eyewear_combo_3.length, 3, 0.25, 5, 0.35);
     totalMultipliers += VRCombo;
     allMultipliers['eyewear']['VRCombo'] = VRCombo;
-
+    setMultipliers({
+      total: totalMultipliers,
+      list: allMultipliers,
+    })
     return {
       total: totalMultipliers,
       list: allMultipliers,
     };
   }, [stakerInfo, jungle]);
+  useEffect(() => {
+    getMultipliers();
+  }, [getMultipliers, stakedAnimals, stakerInfo]);
+  
 
   const getPendingStakingRewards = useCallback(
     (animal: Animal, end: Date) => {
@@ -1147,6 +1155,7 @@ export const StakingProvider = (props: Props) => {
 
         const metadata: StakedMetaData = {
           mint: animal.mint,
+          // background: 0,
           background: kfwComboEncoding.background[background] ?? 255,
           backAccessory: kfwComboEncoding.back_accessory[back_accessory] ?? 255,
           skin: kfwComboEncoding.skin[skin] ?? 255,
@@ -1680,11 +1689,10 @@ export const StakingProvider = (props: Props) => {
         autoClose: 4000,
       });
 
-      fetchUserAccount();
+
       fetchAnimals();
-      setTimeout(() => {
-        fetchStakedAnimals();
-      }, 20000);
+      fetchStakedAnimals();
+      fetchUserAccount();
     } catch (err) {
       toast.update(claimToast, {
         render: 'Failed to Claim Earnings',
@@ -1731,7 +1739,7 @@ export const StakingProvider = (props: Props) => {
         stakedAnimals: stakedAnimals || [],
         userAccount,
         getRarityMultiplier,
-        getMultipliers,
+        multipliers,
         getPendingStakingRewards,
         fetchAnimal,
         refreshAnimals,
