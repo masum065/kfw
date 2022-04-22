@@ -1155,8 +1155,8 @@ export const StakingProvider = (props: Props) => {
 
         const metadata: StakedMetaData = {
           mint: animal.mint,
-          // background: 0,
-          background: kfwComboEncoding.background[background] ?? 255,
+          background: 0,
+          // background: kfwComboEncoding.background[background] ?? 255,
           backAccessory: kfwComboEncoding.back_accessory[back_accessory] ?? 255,
           skin: kfwComboEncoding.skin[skin] ?? 255,
           clothing: kfwComboEncoding.clothing[clothing] ?? 255,
