@@ -5,6 +5,13 @@ import { useStack } from '../../../hooks/useStaking';
 import { NftCard } from '../NftCard/NftCard';
 import './collections.scss';
 const val: [string, unknown][] = [];
+
+const camelCaseToText = (str: string) => {
+  str = str.replace(/([A-Z])/g, " $1");
+  str = str.charAt(0).toUpperCase() + str.slice(1);
+  return str
+}
+
 export const Collections = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const wallet = useWallet();
@@ -127,10 +134,8 @@ export const Collections = () => {
 
   useEffect(() => {
     if (val.length === 0) {
-      console.log('val', multipliers);
-      Object.entries(multipliers).map((value, key) => {
+      Object.entries(multipliers).map((value: [string, any], key) => {
         val.push(value);
-        console.log(value);
       });
     }
   }, [stakedAnimals]);
@@ -240,7 +245,7 @@ export const Collections = () => {
         <ul>
           {val.map((v) => (
             <li>
-              <b>{v[0]}:</b>
+              <b>{camelCaseToText(v[0])} {camelCaseToText(v[0]).split(" ")[1] != 'Multiplier' && 'Combos'}:</b>
               <ul className='inner-list'>
                 {typeof v[1] === 'number' ? (
                   <li>
