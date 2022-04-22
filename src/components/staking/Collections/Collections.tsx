@@ -232,7 +232,7 @@ export const Collections = () => {
                       if (value !== 0) {
                         return (
                           <li>
-                            <span>{name}:</span> <span>{value}</span>
+                            <span>{camelCaseToText(name)}:</span> <span>{value}</span>
                           </li>
                         );
                       } else {
