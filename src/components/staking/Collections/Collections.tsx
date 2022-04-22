@@ -110,11 +110,18 @@ export const Collections = () => {
 
   // const multipliers = useMemo(() => getMultipliers(), []);
 
+  // useEffect(() => {
+  //   if (!val.length) {
+  //     setMultipliers(getMultipliers().list);
+  //   }
+  // });
+
+  // Get and Set multiplier list
   useEffect(() => {
     if (!val.length) {
       setMultipliers(getMultipliers().list);
     }
-  });
+  }, [getMultipliers, redeemableRewards]);
 
   // const [val, setVal] = useState
 
