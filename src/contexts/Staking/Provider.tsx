@@ -697,18 +697,18 @@ export const StakingProvider = (props: Props) => {
     // }
 
     // Adding Full Element Combo Multiplier
-    allMultipliers['background']['fullElementalCombo'] = 0;
-    if (full_element_combo.length >= full_element_combo_values.length - 1) {
-      totalMultipliers += 0.3;
-      allMultipliers['background']['fullElementalCombo'] += 0.3;
-    }
+    // allMultipliers['background']['fullElementalCombo'] = 0;
+    // if (full_element_combo.length >= full_element_combo_values.length - 1) {
+    //   totalMultipliers += 0.3;
+    //   allMultipliers['background']['fullElementalCombo'] += 0.3;
+    // }
 
     // Adding Basic Element Combo Multiplier
-    allMultipliers['background']['basicElementalCombo'] = 0;
-    if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
-      totalMultipliers += 0.3;
-      allMultipliers['background']['basicElementalCombo'] += 0.3;
-    }
+    // allMultipliers['background']['basicElementalCombo'] = 0;
+    // if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
+    //   totalMultipliers += 0.3;
+    //   allMultipliers['background']['basicElementalCombo'] += 0.3;
+    // }
 
     // BACK_ACCESSORY
     allMultipliers['backAccessory'] = {};
