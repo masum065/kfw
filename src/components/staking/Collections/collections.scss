@@ -232,6 +232,38 @@
     flex-direction: column;
     display: flex;
     text-decoration: none;
+
+    .token-image {
+      position: relative;
+      border: 5px solid transparent;
+      &::before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        content: '';
+      }
+    }
+    .token-image.active-select {
+      border-color: #ffc83c;
+      &::before {
+        background-color: rgba(0, 0, 0, 0.301);
+      }
+    }
+    .token-image.selected {
+      border-color: #56b851;
+      &::before {
+        background-color: rgba(255, 255, 255, 0);
+      }
+    }
+    .token-image.selection-disabled {
+      cursor: not-allowed;
+    }
+    .token-image.selection-allowed {
+      cursor: pointer;
+    }
+
     img {
       width: 100%;
     }
@@ -290,6 +322,10 @@
       text-align: center;
       color: #000000;
     }
+  }
+  .box3 {
+    display: flex;
+    gap: 10px;
   }
 }
 .warriorTrainingWrenchBoxWrap {

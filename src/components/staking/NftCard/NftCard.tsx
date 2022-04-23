@@ -6,17 +6,19 @@ interface Props {
   token: Animal;
   isStaked?: boolean;
   redeemableReward?: (coin: Number | String | any) => void;
-  // activeBulk?: boolean;
-  // limitOfSelection?: boolean;
+  activeBulk?: boolean;
+  limitOfSelection?: boolean;
+  onSelect?: () => void;
 }
 
 export const NftCard = ({
   token,
   isStaked,
   redeemableReward,
-}: // activeBulk,
-// limitOfSelection,
-Props) => {
+  activeBulk,
+  limitOfSelection,
+  onSelect,
+}: Props) => {
   const {
     getPendingStakingRewards,
     fetchAnimal,
@@ -80,17 +82,6 @@ Props) => {
   }, [augmentedAnimal, claimStakingRewards, fetchAnimalStats]);
 
   // pending rewords
-  // useEffect(() => {
-  //   if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
-  //   if (augmentedAnimal?.lastClaim && isStaked) {
-  //     const redeem = getPendingStakingRewards(augmentedAnimal, stakingPeriod);
-
-  //     return () => {
-  //       setRedeemable(redeem);
-  //     };
-  //   }
-  // }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards]);
-
   useEffect(() => {
     if (!augmentedAnimal?.lastClaim || !stakingPeriod) return;
     if (augmentedAnimal?.lastClaim && isStaked) {
@@ -100,7 +91,6 @@ Props) => {
       );
       setRedeemable(redeemable);
       setMultipliers(multipliers);
-      // console.log(rewards);
       //@ts-ignore
       redeemableReward(redeemable.pendingRewards);
 
@@ -108,16 +98,36 @@ Props) => {
     }
   }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards, isStaked]);
 
+  //@ts-ignore
+  const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
+
+  // useEffect(()=> {
+
+  // })
+
   return (
     <div>
       <div className='warriorTabContentBox'>
-        {/* {activeBulk ? ( */}
-        {/* <SelectNFT disabled={limitOfSelection} value={token.metadata.name}> */}
-        {/* <img src={token.uriData.image} alt='' /> */}
-        {/* </SelectNFT> */}
-        {/* ) : ( */}
-        <img src={token.metadata.image} alt='' />
-        {/* )} */}
+        {activeBulk ? (
+          <div
+            onClick={onSelect}
+            className={`token-image ${
+              activeBulk && claimList.includes(token.metadata.name)
+                ? 'selected'
+                : 'active-select'
+            } ${
+              limitOfSelection && !claimList.includes(token.metadata.name)
+                ? 'selection-disabled'
+                : 'selection-allowed '
+            }`}
+          >
+            <img src={token.metadata.image} alt='' />
+          </div>
+        ) : (
+          <div className={`token-image`}>
+            <img src={token.metadata.image} alt='' />
+          </div>
+        )}
         <span>{token.metadata.name}</span>
         {extraMultiplier && (
           <div>
@@ -158,17 +168,6 @@ Props) => {
           </div>
         )} */}
       </div>
-
-      {/* <ButtonGroup>
-        {augmentedAnimal?.lastClaim && isStaked ? (
-          <>
-            <button onClick={handleClaim}>Claim Earning</button>
-            <button onClick={handleUnstake}>Unstake</button>
-          </>
-        ) : (
-          <button onClick={handleStake}>Stake</button>
-        )}
-      </ButtonGroup> */}
     </div>
   );
 };
