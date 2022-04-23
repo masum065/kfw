@@ -185,7 +185,7 @@ export const Collections = () => {
                       </div>
                     ))
                   ) : (
-                    <span>No warrior trained yet.</span>
+                    <span className='alert'>No warrior trained yet.</span>
                   )}
                 </div>
                 <div className='bottomBoxesWrap'>

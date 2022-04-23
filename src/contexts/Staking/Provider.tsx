@@ -103,7 +103,10 @@ export const StakingProvider = (props: Props) => {
   const [jungle, setJungle] = useState<Jungle>();
   const [stakerInfo, setStakerInfo] = useState<StakerInfo>();
   const [stakedAnimals, setStakedAnimals] = useState<Animal[]>();
-  const [multipliers, setMultipliers] = useState<Multipliers>({total: 0, list: []});
+  const [multipliers, setMultipliers] = useState<Multipliers>({
+    total: 0,
+    list: [],
+  });
   const [animalsStatus, setAnimalsStatus] = useState<any>({
     loading: false,
     loadingEnd: true,
@@ -687,11 +690,11 @@ export const StakingProvider = (props: Props) => {
     });
 
     // Adding Hong Kong Combo Multiplier
-    allMultipliers['background']['hongKongCombo'] = 0;
-    if (hk_combo.length == hk_combo_values.length) {
-      totalMultipliers += 0.3;
-      allMultipliers['background']['hongKongCombo'] += 0.3;
-    }
+    // allMultipliers['background']['hongKongCombo'] = 0;
+    // if (hk_combo.length == hk_combo_values.length) {
+    //   totalMultipliers += 0.3;
+    //   allMultipliers['background']['hongKongCombo'] += 0.3;
+    // }
 
     // Adding Full Element Combo Multiplier
     allMultipliers['background']['fullElementalCombo'] = 0;
@@ -973,7 +976,7 @@ export const StakingProvider = (props: Props) => {
     setMultipliers({
       total: totalMultipliers,
       list: allMultipliers,
-    })
+    });
     return {
       total: totalMultipliers,
       list: allMultipliers,
@@ -982,7 +985,6 @@ export const StakingProvider = (props: Props) => {
   useEffect(() => {
     getMultipliers();
   }, [getMultipliers, stakedAnimals, stakerInfo]);
-  
 
   const getPendingStakingRewards = useCallback(
     (animal: Animal, end: Date) => {
@@ -1688,7 +1690,6 @@ export const StakingProvider = (props: Props) => {
         closeButton: true,
         autoClose: 4000,
       });
-
 
       fetchAnimals();
       fetchStakedAnimals();
