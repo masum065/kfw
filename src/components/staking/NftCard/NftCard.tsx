@@ -132,7 +132,7 @@ export const NftCard = ({
             <img src={token.metadata.image} alt='' />
           </div>
         ) : (
-          <div className={`token-image`} data-tip data-for='happyFace'>
+          <div className={`token-image`} data-tip data-for={token.metadata.name}>
             <img src={token.metadata.image} alt='' />
           </div>
         )}
@@ -161,7 +161,7 @@ export const NftCard = ({
           </button>
         )}
 
-        <ReactTooltip id='happyFace' place='right' type='light' effect='solid'>
+        <ReactTooltip id={token.metadata.name} place='top' type='light' effect='solid'>
           <div className='combo-box'>
             <h5>Eligible Attributes for Combos</h5>
             {combos.length > 0 ? (
