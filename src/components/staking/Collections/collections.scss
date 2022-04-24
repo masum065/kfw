@@ -27,7 +27,7 @@
     }
     &:hover {
       &:before {
-        content: '';
+        content: "";
         background: url(../../../assets/img/border.png) no-repeat;
         width: 100%;
         height: 100%;
@@ -92,9 +92,9 @@
         margin-bottom: 10px;
       }
     }
-    .nav-link[aria-expanded='false'] {
+    .nav-link[aria-expanded="false"] {
       &:after {
-        content: '';
+        content: "";
         position: absolute;
         right: 19px;
         bottom: 13px;
@@ -104,9 +104,9 @@
         background-size: cover;
       }
     }
-    .nav-link[aria-expanded='true'] {
+    .nav-link[aria-expanded="true"] {
       &:after {
-        content: '';
+        content: "";
         position: absolute;
         right: 19px;
         bottom: 13px;
@@ -211,7 +211,7 @@
     }
     &:hover {
       &:before {
-        content: '';
+        content: "";
         background: url(../../../assets/img/atr-outline.png) no-repeat;
         background-size: cover;
         position: absolute;
@@ -229,7 +229,7 @@
     justify-content: center;
     flex-direction: column;
     display: flex;
-    gap: .5rem;
+    gap: 0.5rem;
     text-decoration: none;
 
     .token-image {
@@ -241,7 +241,7 @@
         top: 0;
         height: 100%;
         width: 100%;
-        content: '';
+        content: "";
       }
     }
     .token-image.active-select {

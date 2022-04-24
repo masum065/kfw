@@ -161,18 +161,16 @@ export const NftCard = ({
           </button>
         )}
 
-        {combos.length > 0 && (
           <div className="combo-box">
             <h5>Eligible Attributes for Combos</h5>
-            <ul className="combo-list">
+            {combos.length > 0 ? <ul className="combo-list">
               {combos.map((combo) => (
                 <li key={combo.attribute}>
                   <b>{combo.attribute}:</b> {combo.value}
                 </li>
               ))}
-            </ul>
+            </ul> : "No Attribute is eligible for combo."}
           </div>
-        )}
       </div>
     </div>
   );
