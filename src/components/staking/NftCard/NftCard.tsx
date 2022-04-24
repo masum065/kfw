@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Animal, Rewards } from "../../../contexts/Staking/types";
-import { useStack } from "../../../hooks/useStaking";
-import { camelCaseToText } from "../../../utils";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import ReactTooltip from 'react-tooltip';
+import { Animal, Rewards } from '../../../contexts/Staking/types';
+import { useStack } from '../../../hooks/useStaking';
 
 interface Props {
   token: Animal;
@@ -82,7 +82,7 @@ export const NftCard = ({
     console.log(augmentedAnimal);
     if (!augmentedAnimal) return;
     await claimStakingRewards(augmentedAnimal);
-    console.log("claim");
+    console.log('claim');
     fetchAnimalStats();
   }, [augmentedAnimal, claimStakingRewards, fetchAnimalStats]);
 
@@ -111,29 +111,29 @@ export const NftCard = ({
   }, [setCombos, getCombos]);
 
   //@ts-ignore
-  const claimList = JSON.parse(sessionStorage.getItem("claimItemList"));
+  const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
 
   return (
     <div>
-      <div className="warriorTabContentBox">
+      <div className='warriorTabContentBox'>
         {activeBulk ? (
           <div
             onClick={onSelect}
             className={`token-image ${
               activeBulk && claimList.includes(token.metadata.name)
-                ? "selected"
-                : "active-select"
+                ? 'selected'
+                : 'active-select'
             } ${
               limitOfSelection && !claimList.includes(token.metadata.name)
-                ? "selection-disabled"
-                : "selection-allowed "
+                ? 'selection-disabled'
+                : 'selection-allowed '
             }`}
           >
-            <img src={token.metadata.image} alt="" />
+            <img src={token.metadata.image} alt='' />
           </div>
         ) : (
-          <div className={`token-image`}>
-            <img src={token.metadata.image} alt="" />
+          <div className={`token-image`} data-tip data-for='happyFace'>
+            <img src={token.metadata.image} alt='' />
           </div>
         )}
         <span>{token.metadata.name}</span>
@@ -146,31 +146,37 @@ export const NftCard = ({
 
         {augmentedAnimal?.lastClaim && isStaked ? (
           <div
-            style={{ display: "grid", gap: 5, gridTemplateColumns: "1fr 1fr" }}
+            style={{ display: 'grid', gap: 5, gridTemplateColumns: '1fr 1fr' }}
           >
-            <button className="generalGreenBtn small" onClick={handleUnstake}>
+            <button className='generalGreenBtn small' onClick={handleUnstake}>
               Unstake
             </button>
-            <button className="generalGreenBtn small" onClick={handleClaim}>
+            <button className='generalGreenBtn small' onClick={handleClaim}>
               Claim
             </button>
           </div>
         ) : (
-          <button className="generalGreenBtn small" onClick={handleStake}>
+          <button className='generalGreenBtn small' onClick={handleStake}>
             Stake
           </button>
         )}
 
-          <div className="combo-box">
+        <ReactTooltip id='happyFace' place='right' type='light' effect='solid'>
+          <div className='combo-box'>
             <h5>Eligible Attributes for Combos</h5>
-            {combos.length > 0 ? <ul className="combo-list">
-              {combos.map((combo) => (
-                <li key={combo.attribute}>
-                  <b>{combo.attribute}:</b> {combo.value}
-                </li>
-              ))}
-            </ul> : "No Attribute is eligible for combo."}
+            {combos.length > 0 ? (
+              <ul className='combo-list'>
+                {combos.map((combo) => (
+                  <li key={combo.attribute}>
+                    <b>{combo.attribute}:</b> {combo.value}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              'No Attribute is eligible for combo.'
+            )}
           </div>
+        </ReactTooltip>
       </div>
     </div>
   );

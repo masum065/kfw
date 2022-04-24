@@ -99,6 +99,7 @@ export const Collections = () => {
     onSetClaimListOnStorage();
   }, [stakedAnimals]);
 
+  // console.log(stakedAnimals[0]);
   return (
     <div className='contentContainer position-relative'>
       <div className='aboutContainerWrap'>
