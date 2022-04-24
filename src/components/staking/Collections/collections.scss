@@ -61,8 +61,6 @@
     line-height: 55px;
     text-align: center;
     color: #0c5f08;
-    strong {
-    }
   }
   .warriorDropdown {
     max-width: 90%;
@@ -231,6 +229,7 @@
     justify-content: center;
     flex-direction: column;
     display: flex;
+    gap: .5rem;
     text-decoration: none;
 
     .token-image {
@@ -492,4 +491,14 @@
   justify-content: space-between;
   border-bottom: 1px solid black;
   padding: 5px;
+}
+
+.combo {
+  &-box h5 {
+    font-weight: bold;
+  }
+  &-list {
+    list-style: none;
+    padding: 0;
+  }
 }

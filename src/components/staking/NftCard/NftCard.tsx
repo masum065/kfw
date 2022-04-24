@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Animal, Rewards } from '../../../contexts/Staking/types';
-import { useStack } from '../../../hooks/useStaking';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Animal, Rewards } from "../../../contexts/Staking/types";
+import { useStack } from "../../../hooks/useStaking";
+import { camelCaseToText } from "../../../utils";
 
 interface Props {
   token: Animal;
@@ -20,6 +21,7 @@ export const NftCard = ({
   onSelect,
 }: Props) => {
   const {
+    getCombos,
     getPendingStakingRewards,
     fetchAnimal,
     stakeAnimal,
@@ -29,6 +31,9 @@ export const NftCard = ({
 
   const [augmentedAnimal, setAugmentedAnimal] = useState<Animal>();
   const [stakingPeriod, setStakingPeriod] = useState<Date>(new Date());
+  const [combos, setCombos] = useState<{ attribute: string; value: string }[]>(
+    []
+  );
   const [redeemable, setRedeemable] = useState<Rewards>({
     baseRewards: 0,
     pendingRewards: 0,
@@ -77,7 +82,7 @@ export const NftCard = ({
     console.log(augmentedAnimal);
     if (!augmentedAnimal) return;
     await claimStakingRewards(augmentedAnimal);
-    console.log('claim');
+    console.log("claim");
     fetchAnimalStats();
   }, [augmentedAnimal, claimStakingRewards, fetchAnimalStats]);
 
@@ -98,34 +103,37 @@ export const NftCard = ({
     }
   }, [augmentedAnimal, stakingPeriod, getPendingStakingRewards, isStaked]);
 
+  useEffect(() => {
+    const combos = Object.entries(getCombos(token)).map(
+      ([key, value]) => value && { attribute: key, value }
+    ) as { attribute: string; value: string }[];
+    setCombos(combos.filter((elem) => elem != undefined));
+  }, [setCombos, getCombos]);
+
   //@ts-ignore
-  const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
-
-  // useEffect(()=> {
-
-  // })
+  const claimList = JSON.parse(sessionStorage.getItem("claimItemList"));
 
   return (
     <div>
-      <div className='warriorTabContentBox'>
+      <div className="warriorTabContentBox">
         {activeBulk ? (
           <div
             onClick={onSelect}
             className={`token-image ${
               activeBulk && claimList.includes(token.metadata.name)
-                ? 'selected'
-                : 'active-select'
+                ? "selected"
+                : "active-select"
             } ${
               limitOfSelection && !claimList.includes(token.metadata.name)
-                ? 'selection-disabled'
-                : 'selection-allowed '
+                ? "selection-disabled"
+                : "selection-allowed "
             }`}
           >
-            <img src={token.metadata.image} alt='' />
+            <img src={token.metadata.image} alt="" />
           </div>
         ) : (
           <div className={`token-image`}>
-            <img src={token.metadata.image} alt='' />
+            <img src={token.metadata.image} alt="" />
           </div>
         )}
         <span>{token.metadata.name}</span>
@@ -138,35 +146,33 @@ export const NftCard = ({
 
         {augmentedAnimal?.lastClaim && isStaked ? (
           <div
-            style={{ display: 'grid', gap: 5, gridTemplateColumns: '1fr 1fr' }}
+            style={{ display: "grid", gap: 5, gridTemplateColumns: "1fr 1fr" }}
           >
-            <button className='generalGreenBtn small' onClick={handleUnstake}>
+            <button className="generalGreenBtn small" onClick={handleUnstake}>
               Unstake
             </button>
-            <button className='generalGreenBtn small' onClick={handleClaim}>
+            <button className="generalGreenBtn small" onClick={handleClaim}>
               Claim
             </button>
           </div>
         ) : (
-          <button className='generalGreenBtn small' onClick={handleStake}>
+          <button className="generalGreenBtn small" onClick={handleStake}>
             Stake
           </button>
         )}
 
-        {/* <div className='multiplier-box'>
-          <span>Earning Per Day</span>{' '}
-          <span>
-            <span style={{ fontSize: 10, textTransform: 'lowercase' }}>x</span>
-            {(token?.emissionsPerDay || 0) / 10 ** 9}
-          </span>
-        </div> */}
-
-        {/* {(augmentedAnimal?.lastClaim && isStaked) && (
-          <div className='multiplier-box'>
-            <span>Pending Earnings</span>{' '}
-            <span>{redeemable.pendingRewards.toPrecision(5)}</span>
+        {combos.length > 0 && (
+          <div className="combo-box">
+            <h5>Eligible Attributes for Combos</h5>
+            <ul className="combo-list">
+              {combos.map((combo) => (
+                <li key={combo.attribute}>
+                  <b>{combo.attribute}:</b> {combo.value}
+                </li>
+              ))}
+            </ul>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

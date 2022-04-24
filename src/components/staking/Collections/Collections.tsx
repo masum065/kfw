@@ -1,13 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useStack } from '../../../hooks/useStaking';
+import { camelCaseToText } from '../../../utils';
 import { NftCard } from '../NftCard/NftCard';
 import './collections.scss';
-
-const camelCaseToText = (str: string) => {
-  str = str.replace(/([A-Z])/g, ' $1');
-  str = str.charAt(0).toUpperCase() + str.slice(1);
-  return str;
-};
 
 export const Collections = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -171,7 +166,7 @@ export const Collections = () => {
                 <div className='row'>
                   {stakedAnimals.length ? (
                     stakedAnimals.map((token, index) => (
-                      <div key={index} className='col-md-2'>
+                      <div key={index} className='col-md-3'>
                         <NftCard
                           redeemableReward={(coin) =>
                             updateValue(Number(coin), index)
@@ -254,12 +249,12 @@ export const Collections = () => {
 
       <div className='multipliers-card'>
         <ul>
-          {Object.entries(multipliers.list).map((group) => {
+          {Object.entries(multipliers.list).map((group, index) => {
             const entries = Object.entries(group);
             //@ts-ignore
             const [name, value]: [string, any] = [entries[0][1], entries[1][1]];
             return (
-              <li>
+              <li key={index}>
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >

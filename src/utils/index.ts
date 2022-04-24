@@ -168,3 +168,9 @@ export const buildLeaves = (
 
   return leaves;
 };
+
+export const camelCaseToText = (str: string) => {
+  str = str.replace(/([A-Z])/g, ' $1');
+  str = str.charAt(0).toUpperCase() + str.slice(1);
+  return str;
+};

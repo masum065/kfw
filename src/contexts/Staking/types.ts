@@ -63,6 +63,7 @@ export interface ContextValues {
   stakedAnimals: Animal[];
   userAccount?: TokenAccount;
   getRarityMultiplier: (animal: Animal) => number | undefined;
+  getCombos: (animal: Animal) => any | undefined;
   multipliers: Multipliers;
   getPendingStakingRewards: (animal: Animal, since: Date) => Rewards;
   fetchAnimal: (mint: PublicKey) => Promise<Animal | undefined>;

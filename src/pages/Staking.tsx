@@ -6,8 +6,6 @@ import { MainLayout } from '../layouts/MainLayout';
 
 const Staking = () => {
   const wallet = useWallet();
-
-  console.log(wallet);
   return (
     // <Row justify='center'>
     <MainLayout>
