@@ -55,11 +55,13 @@ const check_combo_distinct = (
   let index = combo_values.indexOf(value);
   let check_exist = combo.indexOf(value);
 
-  if (check_exist > -1) {
+  if (check_exist == -1) {
     if (index > -1) {
+      console.log("combo found index", index)
       combo.push(combo_values[index]);
     }
   }
+
   return combo;
 };
 
@@ -546,6 +548,20 @@ export const StakingProvider = (props: Props) => {
     let eyewear_combo_3_values = [9, 10, 11];
     let eyewear_combo_3: number[] = [];
 
+
+      // BACKGROUND
+      allMultipliers['background'] = {};
+      allMultipliers['backAccessory'] = {};
+      allMultipliers['skin'] = {};
+      allMultipliers['clothing'] = {};
+      allMultipliers['frontAccessory'] = {};
+      allMultipliers['hair'] = {};
+      allMultipliers['hairAccessory'] = {};
+      allMultipliers['mouthAccessory'] = {};
+      allMultipliers['eyes'] = {};
+      allMultipliers['eyewear'] = {};
+
+
     stakerInfo.staked.forEach((animal: StakedMetaData) => {
       // Animal Attributes
       let background = animal.background;
@@ -558,9 +574,6 @@ export const StakingProvider = (props: Props) => {
       let mouth_accessory = animal.mouthAccessory;
       let eyes = animal.eyes;
       let eyewear = animal.eyewear;
-
-      // BACKGROUND
-      allMultipliers['background'] = {};
 
       // Adding to Multiplier if any animal has legendary background
       let index = legendary_bg_values.indexOf(background);
@@ -690,28 +703,26 @@ export const StakingProvider = (props: Props) => {
     });
 
     // Adding Hong Kong Combo Multiplier
-    // allMultipliers['background']['hongKongCombo'] = 0;
-    // if (hk_combo.length == hk_combo_values.length) {
-    //   totalMultipliers += 0.3;
-    //   allMultipliers['background']['hongKongCombo'] += 0.3;
-    // }
+    allMultipliers['background']['hongKongCombo'] = 0;
+    if (hk_combo.length == hk_combo_values.length) {
+      totalMultipliers += 0.3;
+      allMultipliers['background']['hongKongCombo'] += 0.3;
+    }
 
     // Adding Full Element Combo Multiplier
-    // allMultipliers['background']['fullElementalCombo'] = 0;
-    // if (full_element_combo.length >= full_element_combo_values.length - 1) {
-    //   totalMultipliers += 0.3;
-    //   allMultipliers['background']['fullElementalCombo'] += 0.3;
-    // }
+    allMultipliers['background']['fullElementalCombo'] = 0;
+    if (full_element_combo.length >= full_element_combo_values.length - 1) {
+      totalMultipliers += 0.3;
+      allMultipliers['background']['fullElementalCombo'] += 0.3;
+    }
 
     // Adding Basic Element Combo Multiplier
-    // allMultipliers['background']['basicElementalCombo'] = 0;
-    // if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
-    //   totalMultipliers += 0.3;
-    //   allMultipliers['background']['basicElementalCombo'] += 0.3;
-    // }
+    allMultipliers['background']['basicElementalCombo'] = 0;
+    if (basic_element_combo.length >= basic_element_combo_values.length - 1) {
+      totalMultipliers += 0.3;
+      allMultipliers['background']['basicElementalCombo'] += 0.3;
+    }
 
-    // BACK_ACCESSORY
-    allMultipliers['backAccessory'] = {};
     // Adding Back Accessory Combo Multiplier
     let capeMasterCombo = check_multiplier(
       back_accessory_combo.length,
@@ -723,8 +734,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += capeMasterCombo;
     allMultipliers['backAccessory']['capeMasterCombo'] = capeMasterCombo;
 
-    // SKIN
-    allMultipliers['skin'] = {};
     // Adding Skin Combo 1 Multiplier
     let waterSpiritCombo = check_multiplier(
       skin_combo_1.length,
@@ -741,8 +750,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += alienCombo;
     allMultipliers['skin']['alienCombo'] = alienCombo;
 
-    // CLOTHING
-    allMultipliers['clothing'] = {};
     // Adding Clothing Combo 1 Multiplier
     let armorCombo = check_multiplier(
       clothing_combo_1.length,
@@ -803,8 +810,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += animeCombo;
     allMultipliers['clothing']['animeCombo'] = animeCombo;
 
-    // FRONT_ACCESSORY
-    allMultipliers['frontAccessory'] = {};
     // Adding Front Accessory Combo Multiplier
     let fighterCombo = check_multiplier(
       front_accessory_combo.length,
@@ -816,8 +821,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += fighterCombo;
     allMultipliers['frontAccessory']['fighterCombo'] = fighterCombo;
 
-    // HAIR
-    allMultipliers['hair'] = {};
     // Adding Hair Combo 1 Multiplier
     let legendaryHairCombo = 0;
     legendaryHairCombo += check_multiplier(hair_combo_1[0], 2, 0.25, 4, 0.35);
@@ -849,8 +852,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += maskCombo;
     allMultipliers['hair']['maskCombo'] = maskCombo;
 
-    // HAIR_ACCESSORY
-    allMultipliers['hairAccessory'] = {};
     // Adding Hair Accessory Combo Multiplier
     let legendaryHairAccessory = 0;
     legendaryHairAccessory += check_multiplier(
@@ -912,8 +913,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += legendaryHairAccessory;
     allMultipliers['hairAccessory']['legendary'] = legendaryHairAccessory;
 
-    // MOUTH_ACCESSORY
-    allMultipliers['mouthAccessory'] = {};
     // Adding Mouth Accessory Combo Multiplier
     let legendaryMouthAccessory = 0;
     legendaryMouthAccessory += check_multiplier(
@@ -933,8 +932,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += legendaryMouthAccessory;
     allMultipliers['mouthAccessory']['legendary'] = legendaryMouthAccessory;
 
-    // EYES
-    allMultipliers['eyes'] = {};
     // Adding Eye Combo 1 Multiplier
     let laserCombo = check_multiplier(eye_combo_1.length, 3, 0.25, 5, 0.35);
     totalMultipliers += laserCombo;
@@ -945,8 +942,6 @@ export const StakingProvider = (props: Props) => {
     totalMultipliers += largeEyeCombo;
     allMultipliers['eyes']['largeEyeCombo'] = largeEyeCombo;
 
-    // EYEWEAR
-    allMultipliers['eyewear'] = {};
     // Adding Eyewear Combo 1 Multiplier
     let CyclopsCombo = check_multiplier(
       eyewear_combo_1.length,
@@ -984,7 +979,7 @@ export const StakingProvider = (props: Props) => {
   }, [stakerInfo, jungle]);
   useEffect(() => {
     getMultipliers();
-  }, [getMultipliers, stakedAnimals, stakerInfo]);
+  }, [getMultipliers]);
 
   const getPendingStakingRewards = useCallback(
     (animal: Animal, end: Date) => {
@@ -1157,7 +1152,7 @@ export const StakingProvider = (props: Props) => {
 
         const metadata: StakedMetaData = {
           mint: animal.mint,
-          // background: 0,
+          // background: 12,
           background: kfwComboEncoding.background[background] ?? 255,
           backAccessory: kfwComboEncoding.back_accessory[back_accessory] ?? 255,
           skin: kfwComboEncoding.skin[skin] ?? 255,
