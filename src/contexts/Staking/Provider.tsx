@@ -57,7 +57,6 @@ const check_combo_distinct = (
 
   if (check_exist == -1) {
     if (index > -1) {
-      console.log("combo found index", index)
       combo.push(combo_values[index]);
     }
   }
