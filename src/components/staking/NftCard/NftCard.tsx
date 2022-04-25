@@ -132,7 +132,11 @@ export const NftCard = ({
             <img src={token.metadata.image} alt='' />
           </div>
         ) : (
-          <div className={`token-image`} data-tip data-for={token.metadata.name}>
+          <div
+            className={`token-image`}
+            data-tip
+            data-for={token.metadata.name}
+          >
             <img src={token.metadata.image} alt='' />
           </div>
         )}
@@ -143,6 +147,10 @@ export const NftCard = ({
             <p>{extraMultiplier}X</p>
           </div>
         )}
+        <div className='counter-box'>
+          <h6>Daily Emission:</h6>
+          <p>{(token?.emissionsPerDay || 0) / 10 ** 9}X</p>
+        </div>
 
         {augmentedAnimal?.lastClaim && isStaked ? (
           <div
@@ -161,14 +169,22 @@ export const NftCard = ({
           </button>
         )}
 
-        <ReactTooltip id={token.metadata.name} place='top' type='light' effect='solid'>
+        <ReactTooltip
+          id={token.metadata.name}
+          place='top'
+          type='light'
+          effect='solid'
+        >
           <div className='combo-box'>
             <h5>Eligible Attributes for Combos</h5>
             {combos.length > 0 ? (
               <ul className='combo-list'>
                 {combos.map((combo) => (
                   <li key={combo.attribute}>
-                    <b>{combo.attribute}:</b> {combo.value}
+                    <b style={{ textTransform: 'capitalize' }}>
+                      {combo.attribute}:
+                    </b>{' '}
+                    {combo.value}
                   </li>
                 ))}
               </ul>

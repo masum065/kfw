@@ -10,6 +10,7 @@ export const Collections = () => {
   const [redeemableRewards, setRedeemableRewards] = useState<number[]>([]);
   const [checkBoxValues, setCheckboxValues] = useState<string[]>([]);
   const [bulk, setBulk] = useState(false);
+  const [toggleMultipliers, setToggleMultipliers] = useState(false);
 
   const {
     animals,
@@ -66,7 +67,7 @@ export const Collections = () => {
         const newList = checkBoxValues.filter((value) => value !== name);
         setCheckboxValues(newList);
       } else {
-        if (checkBoxValues.length >= 2) return;
+        if (checkBoxValues.length >= 10) return;
         setCheckboxValues([...checkBoxValues, name]);
       }
     }
@@ -85,7 +86,7 @@ export const Collections = () => {
   };
 
   const onSetClaimListOnStorage = () => {
-    if (stakedAnimals.length <= 2) {
+    if (stakedAnimals.length <= 10) {
       const autoClaimList = stakedAnimals.map((token) => {
         return `${token.metadata.name}`;
       });
@@ -99,9 +100,11 @@ export const Collections = () => {
     onSetClaimListOnStorage();
   }, [stakedAnimals]);
 
-  // console.log(stakedAnimals[0]);
   return (
-    <div className='contentContainer position-relative'>
+    <div
+      className='contentContainer position-relative'
+      style={{ overflow: 'hidden' }}
+    >
       <div className='aboutContainerWrap'>
         <div className='container'>
           <div className='warriorTrainingTabs'>
@@ -167,7 +170,7 @@ export const Collections = () => {
                 <div className='row'>
                   {stakedAnimals.length ? (
                     stakedAnimals.map((token, index) => (
-                      <div key={index} className='col-md-3'>
+                      <div key={index} className='col-md-2'>
                         <NftCard
                           redeemableReward={(coin) =>
                             updateValue(Number(coin), index)
@@ -176,7 +179,7 @@ export const Collections = () => {
                           token={token}
                           isStaked={true}
                           activeBulk={bulk}
-                          limitOfSelection={checkBoxValues.length >= 2}
+                          limitOfSelection={checkBoxValues.length >= 10}
                         />
                       </div>
                     ))
@@ -199,7 +202,7 @@ export const Collections = () => {
                   <div className='box3'>
                     {!stakedAnimals.length ? (
                       ''
-                    ) : stakedAnimals.length >= 2 ? (
+                    ) : stakedAnimals.length >= 10 ? (
                       <>
                         {bulk ? (
                           <>
@@ -248,63 +251,78 @@ export const Collections = () => {
         </div>
       </div>
 
-      <div className='multipliers-card'>
-        <ul>
-          {Object.entries(multipliers.list).map((group, index) => {
-            const entries = Object.entries(group);
-            //@ts-ignore
-            const [name, value]: [string, any] = [entries[0][1], entries[1][1]];
-            return (
-              <li key={index}>
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <b>
-                    {camelCaseToText(name)}{' '}
-                    {camelCaseToText(name).split(' ')[1] != 'Multiplier' &&
-                      'Combos'}
-                    :
-                  </b>
-                  {typeof value === 'number' && <span>{value}</span>}
-                </div>
-                <ul className='inner-list'>
-                  {typeof value !== 'number' &&
-                    Object.entries(value).map((combo) => {
-                      const entries = Object.entries(combo);
-                      const [name, value]: [string, any] = [
-                        //@ts-ignore
-                        entries[0][1],
-                        entries[1][1],
-                      ];
-                      if (value !== 0) {
-                        return (
-                          <li>
-                            <span>{camelCaseToText(name)}:</span>{' '}
-                            <span>{value}</span>
-                          </li>
-                        );
-                      } else {
-                        return;
-                      }
-                    })}
-                </ul>
-              </li>
-            );
-          })}
-          <li
-            style={{
-              borderTop: '1px solid black',
-              marginTop: '5px',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
+      <div className='multipliers-wrapper'>
+        <div
+          className='multipliers-card'
+          style={{ marginRight: toggleMultipliers ? 0 : '-240px' }}
+        >
+          <button
+            onClick={() => setToggleMultipliers(!toggleMultipliers)}
+            className='toggle-multiplier-button'
           >
-            <b>Total:</b>
-            <span>
-              1(base) + {Math.round((multipliers.total - 1) * 100) / 100}
-            </span>
-          </li>
-        </ul>
+            Multipliers
+          </button>
+          <ul>
+            {Object.entries(multipliers.list).map((group, index) => {
+              const entries = Object.entries(group);
+              //@ts-ignore
+              const [name, value]: [string, any] = [
+                //@ts-ignore
+                entries[0][1],
+                entries[1][1],
+              ];
+              return (
+                <li key={index}>
+                  <div
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <b>
+                      {camelCaseToText(name)}{' '}
+                      {camelCaseToText(name).split(' ')[1] != 'Multiplier' &&
+                        'Combos'}
+                      :
+                    </b>
+                    {typeof value === 'number' && <span>{value}</span>}
+                  </div>
+                  <ul className='inner-list'>
+                    {typeof value !== 'number' &&
+                      Object.entries(value).map((combo) => {
+                        const entries = Object.entries(combo);
+                        const [name, value]: [string, any] = [
+                          //@ts-ignore
+                          entries[0][1],
+                          entries[1][1],
+                        ];
+                        if (value !== 0) {
+                          return (
+                            <li>
+                              <span>{camelCaseToText(name)}:</span>{' '}
+                              <span>{value}</span>
+                            </li>
+                          );
+                        } else {
+                          return;
+                        }
+                      })}
+                  </ul>
+                </li>
+              );
+            })}
+            <li
+              style={{
+                borderTop: '1px solid black',
+                marginTop: '5px',
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <b>Total:</b>
+              <span>
+                1(base) + {Math.round((multipliers.total - 1) * 100) / 100}
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );

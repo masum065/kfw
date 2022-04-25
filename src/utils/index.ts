@@ -1,16 +1,16 @@
-import * as anchor from "@project-serum/anchor";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from '@project-serum/anchor';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   LAMPORTS_PER_SOL,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
-} from "@solana/web3.js";
+} from '@solana/web3.js';
 
 export interface AlertState {
   open: boolean;
   message: string;
-  severity: "success" | "info" | "warning" | "error" | undefined;
+  severity: 'success' | 'info' | 'warning' | 'error' | undefined;
 }
 
 export const toDate = (value?: anchor.BN) => {
@@ -21,8 +21,8 @@ export const toDate = (value?: anchor.BN) => {
   return new Date(value.toNumber() * 1000);
 };
 
-const numberFormater = new Intl.NumberFormat("en-US", {
-  style: "decimal",
+const numberFormater = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
@@ -30,7 +30,7 @@ const numberFormater = new Intl.NumberFormat("en-US", {
 export const formatNumber = {
   format: (val?: number) => {
     if (!val) {
-      return "--";
+      return '--';
     }
 
     return numberFormater.format(val);
@@ -45,10 +45,10 @@ export const formatNumber = {
 };
 
 export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID =
-  new anchor.web3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+  new anchor.web3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
 
 export const CIVIC = new anchor.web3.PublicKey(
-  "gatem74V238djXdzWnJf94Wo1DcnuGkfijbf3AuBhfs"
+  'gatem74V238djXdzWnJf94Wo1DcnuGkfijbf3AuBhfs'
 );
 
 export const getAtaForMint = async (
@@ -65,7 +65,7 @@ export const getNetworkExpire = async (
   gatekeeperNetwork: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> => {
   return await anchor.web3.PublicKey.findProgramAddress(
-    [gatekeeperNetwork.toBuffer(), Buffer.from("expire")],
+    [gatekeeperNetwork.toBuffer(), Buffer.from('expire')],
     CIVIC
   );
 };
@@ -77,7 +77,7 @@ export const getNetworkToken = async (
   return await anchor.web3.PublicKey.findProgramAddress(
     [
       wallet.toBuffer(),
-      Buffer.from("gateway"),
+      Buffer.from('gateway'),
       Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]),
       gatekeeperNetwork.toBuffer(),
     ],
@@ -137,12 +137,12 @@ export function createAssociatedTokenAccountInstruction(
 
 export const factionToNumber = (faction: string) => {
   switch (faction) {
-    case "basc":
+    case 'basc':
       return 1;
-    case "main":
+    case 'main':
       return 2;
     default:
-      throw new Error("unknown faction");
+      throw new Error('unknown faction');
   }
 };
 
@@ -160,8 +160,8 @@ export const buildLeaves = (
       Buffer.from([
         //@ts-ignore
         ...animal.mint.toBuffer(),
-        ...new anchor.BN(animal.emissionsPerDay).toArray("le", 8),
-        ...new anchor.BN(animal.faction).toArray("le", 8),
+        ...new anchor.BN(animal.emissionsPerDay).toArray('le', 8),
+        ...new anchor.BN(animal.faction).toArray('le', 8),
       ])
     );
   }
