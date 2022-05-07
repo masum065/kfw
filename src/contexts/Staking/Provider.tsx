@@ -418,7 +418,7 @@ export const StakingProvider = (props: Props) => {
       if (!jungle) return [];
 
       const attributes = animal.metadata.attributes;
-      if(!attributes) return [];
+      if (!attributes) return [];
 
       const background: string | undefined = attributes.find(
         (x: any) => x.trait_type.toLowerCase() === "Background".toLowerCase()
@@ -457,21 +457,31 @@ export const StakingProvider = (props: Props) => {
       )?.value;
 
       const combos = {
-        background: kfwComboEncoding.background[background ?? ''] ? background : undefined,
-        backAccessory: kfwComboEncoding.back_accessory[back_accessory ?? ''] ? back_accessory : undefined,
-        skin: kfwComboEncoding.skin[skin ?? ''] ? skin : undefined,
-        clothing: kfwComboEncoding.clothing[clothing ?? ''] ? clothing : undefined,
-        frontAccessory:
-          kfwComboEncoding.front_accessory[front_accessory ?? ''] ? front_accessory : undefined,
-        hair: kfwComboEncoding.hair[hair ?? ''] ? hair : undefined,
-        hairAccessory: kfwComboEncoding.hair_accessory[hair_accessory ?? ''] ? hair_accessory : undefined,
-        mouthAccessory:
-          kfwComboEncoding.mouth_accessory[mouth_accessory ?? ''] ? mouth_accessory : undefined,
-        eyes: kfwComboEncoding.eyes[eyes ?? ''] ? eyes : undefined,
-        eyewear: kfwComboEncoding.eyewear[eyewear ?? ''] ? eyewear : undefined,
+        background: kfwComboEncoding.background[background ?? ""]
+          ? background
+          : undefined,
+        backAccessory: kfwComboEncoding.back_accessory[back_accessory ?? ""]
+          ? back_accessory
+          : undefined,
+        skin: kfwComboEncoding.skin[skin ?? ""] ? skin : undefined,
+        clothing: kfwComboEncoding.clothing[clothing ?? ""]
+          ? clothing
+          : undefined,
+        frontAccessory: kfwComboEncoding.front_accessory[front_accessory ?? ""]
+          ? front_accessory
+          : undefined,
+        hair: kfwComboEncoding.hair[hair ?? ""] ? hair : undefined,
+        hairAccessory: kfwComboEncoding.hair_accessory[hair_accessory ?? ""]
+          ? hair_accessory
+          : undefined,
+        mouthAccessory: kfwComboEncoding.mouth_accessory[mouth_accessory ?? ""]
+          ? mouth_accessory
+          : undefined,
+        eyes: kfwComboEncoding.eyes[eyes ?? ""] ? eyes : undefined,
+        eyewear: kfwComboEncoding.eyewear[eyewear ?? ""] ? eyewear : undefined,
       };
 
-      return combos
+      return combos;
     },
     [jungle]
   );
@@ -1057,10 +1067,7 @@ export const StakingProvider = (props: Props) => {
         };
 
       const elapsed = (end.valueOf() - animal.lastClaim.valueOf()) / 1000;
-      let pendingRewards =
-        (parseFloat((animal.emissionsPerDay || animal.emissionsPerDay) as any) /
-          86400) *
-        elapsed;
+      let pendingRewards = (animal.emissionsPerDay / 86400) * elapsed;
       pendingRewards /= 10 ** 9;
 
       const baseRewards = pendingRewards;
@@ -1736,6 +1743,8 @@ export const StakingProvider = (props: Props) => {
       );
 
       await props.connection.confirmTransaction(signature, "processed");
+
+      console.log(signature);
 
       toast.update(claimToast, {
         render: "Claiming successful",

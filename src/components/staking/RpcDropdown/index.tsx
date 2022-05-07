@@ -23,6 +23,10 @@ const RpcDropdown = () => {
       value: 'https://api.mainnet-beta.solana.com/',
     },
     {
+      label: 'Solana (https://api.devnet.solana.com/)',
+      value: 'https://api.devnet.solana.com/',
+    },
+    {
       label: 'Serum (https://solana-api.projectserum.com/)',
       value: 'https://solana-api.projectserum.com/',
     },

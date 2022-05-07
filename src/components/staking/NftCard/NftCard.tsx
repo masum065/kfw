@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactTooltip from 'react-tooltip';
-import { Animal, Rewards } from '../../../contexts/Staking/types';
-import { useStack } from '../../../hooks/useStaking';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import ReactTooltip from "react-tooltip";
+import { Animal, Rewards } from "../../../contexts/Staking/types";
+import { useStack } from "../../../hooks/useStaking";
 
 interface Props {
   token: Animal;
@@ -82,7 +82,7 @@ export const NftCard = ({
     console.log(augmentedAnimal);
     if (!augmentedAnimal) return;
     await claimStakingRewards(augmentedAnimal);
-    console.log('claim');
+    console.log("claim");
     fetchAnimalStats();
   }, [augmentedAnimal, claimStakingRewards, fetchAnimalStats]);
 
@@ -92,12 +92,13 @@ export const NftCard = ({
     if (augmentedAnimal?.lastClaim && isStaked) {
       const redeemable = getPendingStakingRewards(
         augmentedAnimal,
-        stakingPeriod
+        new Date()
       );
+      console.log(redeemable)
       setRedeemable(redeemable);
       setMultipliers(multipliers);
       //@ts-ignore
-      redeemableReward(redeemable.pendingRewards);
+      redeemableReward(redeemable.baseRewards);
 
       return () => {};
     }
@@ -111,25 +112,25 @@ export const NftCard = ({
   }, [setCombos, getCombos]);
 
   //@ts-ignore
-  const claimList = JSON.parse(sessionStorage.getItem('claimItemList'));
+  const claimList = JSON.parse(sessionStorage.getItem("claimItemList"));
 
   return (
     <div>
-      <div className='warriorTabContentBox'>
+      <div className="warriorTabContentBox">
         {activeBulk ? (
           <div
             onClick={onSelect}
             className={`token-image ${
               activeBulk && claimList.includes(token.metadata.name)
-                ? 'selected'
-                : 'active-select'
+                ? "selected"
+                : "active-select"
             } ${
               limitOfSelection && !claimList.includes(token.metadata.name)
-                ? 'selection-disabled'
-                : 'selection-allowed '
+                ? "selection-disabled"
+                : "selection-allowed "
             }`}
           >
-            <img src={token.metadata.image} alt='' />
+            <img src={token.metadata.image} alt="" />
           </div>
         ) : (
           <div
@@ -137,7 +138,7 @@ export const NftCard = ({
             data-tip
             data-for={token.metadata.name}
           >
-            <img src={token.metadata.image} alt='' />
+            <img src={token.metadata.image} alt="" />
           </div>
         )}
         <span>{token.metadata.name}</span>
@@ -147,49 +148,56 @@ export const NftCard = ({
             <p>{extraMultiplier}X</p>
           </div>
         )}
-        <div className='counter-box'>
+        <div className="counter-box">
           <h6>Daily Emission:</h6>
           <p>{(token?.emissionsPerDay || 0) / 10 ** 9}X</p>
         </div>
 
+        {augmentedAnimal?.lastClaim && isStaked && (
+          <div className="counter-box">
+            <h6>Redeemable:</h6>
+            <p>{redeemable.pendingRewards.toFixed(5)}</p>
+          </div>
+        )}
+
         {augmentedAnimal?.lastClaim && isStaked ? (
           <div
-            style={{ display: 'grid', gap: 5, gridTemplateColumns: '1fr 1fr' }}
+            style={{ display: "grid", gap: 5, gridTemplateColumns: "1fr 1fr" }}
           >
-            <button className='generalGreenBtn small' onClick={handleUnstake}>
+            <button className="generalGreenBtn small" onClick={handleUnstake}>
               Unstake
             </button>
-            <button className='generalGreenBtn small' onClick={handleClaim}>
+            <button className="generalGreenBtn small" onClick={handleClaim}>
               Claim
             </button>
           </div>
         ) : (
-          <button className='generalGreenBtn small' onClick={handleStake}>
+          <button className="generalGreenBtn small" onClick={handleStake}>
             Stake
           </button>
         )}
 
         <ReactTooltip
           id={token.metadata.name}
-          place='top'
-          type='light'
-          effect='solid'
+          place="top"
+          type="light"
+          effect="solid"
         >
-          <div className='combo-box'>
+          <div className="combo-box">
             <h5>Eligible Attributes for Combos</h5>
             {combos.length > 0 ? (
-              <ul className='combo-list'>
+              <ul className="combo-list">
                 {combos.map((combo) => (
                   <li key={combo.attribute}>
-                    <b style={{ textTransform: 'capitalize' }}>
+                    <b style={{ textTransform: "capitalize" }}>
                       {combo.attribute}:
-                    </b>{' '}
+                    </b>{" "}
                     {combo.value}
                   </li>
                 ))}
               </ul>
             ) : (
-              'No Attribute is eligible for combo.'
+              "No Attribute is eligible for combo."
             )}
           </div>
         </ReactTooltip>
